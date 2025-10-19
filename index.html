@@ -4,110 +4,190 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Casamento Gabivana — RSVP & Presentes</title>
+  <meta name="description" content="Confirmação de presença e lista de presentes do casamento Gabivana." />
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 0; padding: 1rem; max-width: 960px; margin-inline: auto; }
-    h1,h2 { margin: .5rem 0; }
-    form, .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; margin: .75rem 0; }
-    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
-    .row { display: flex; gap: .5rem; align-items: center; }
-    label { display: block; font-size: .9rem; margin: .25rem 0; }
-    input, select, textarea, button { width: 100%; padding: .6rem; border: 1px solid #ccc; border-radius: 8px; }
-    button { cursor: pointer; }
-    small.muted { color: #666; }
-    .ok { color: #0a7; }
-    .err { color: #c00; }
+    :root { --radius: 12px; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; color: #111; background: #fff; }
+    header { padding: 2rem 1rem 1rem; text-align: center; }
+    main { padding: 0 1rem 2rem; max-width: 980px; margin-inline: auto; }
+    h1, h2, h3 { margin: .5rem 0; line-height: 1.2; }
+    p { margin: .25rem 0 .75rem; }
+    form, .card { border: 1px solid #e5e5e5; border-radius: var(--radius); padding: 1rem; margin: 1rem 0; background: #fff; }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card img { width: 100%; height: 170px; object-fit: cover; border-radius: 8px; background: #f4f4f4; }
+    .row { display: flex; gap: .75rem; align-items: center; }
+    label { display: block; font-size: .95rem; margin: .35rem 0; }
+    input, select, textarea, button {
+      width: 100%; padding: .65rem .75rem; border: 1px solid #d0d0d0; border-radius: 8px; background: #fff; font: inherit;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid #cfe8ff; border-color: #9fd0ff; }
+    button { cursor: pointer; border: 1px solid #d0d0d0; background: #f8f8f8; transition: background .15s; }
+    button:hover { background: #f1f1f1; }
+    .muted { color: #666; }
+    .ok { color: #107b4e; }
+    .err { color: #b00020; }
+    .tag { display:inline-block; padding:.15rem .5rem; border:1px solid #ddd; border-radius:999px; font-size:.8rem; color:#444; }
+    .spacer { height: .5rem; }
+    footer { padding: 1.5rem; text-align: center; color: #666; font-size: .9rem; }
   </style>
 </head>
 <body>
-  <h1>Casamento Gabivana</h1>
-  <p>Confirme sua presença e, se quiser, escolha um presente ♥</p>
+  <header>
+    <h1>Casamento Gabivana</h1>
+    <p class="muted">Confirme sua presença e, se quiser, escolha um presente ♥</p>
+  </header>
 
-  <h2>RSVP</h2>
-  <form id="rsvpForm">
-    <label>Nome completo <input name="name" required></label>
-    <label>E-mail <input type="email" name="email" required></label>
-    <label>Telefone/WhatsApp <input name="phone"></label>
-    <label>Vai comparecer?
-      <select name="attending" required>
-        <option value="">Selecione…</option>
-        <option>Sim</option>
-        <option>Não</option>
-      </select>
-    </label>
-    <div class="row">
-      <label style="flex:1">Adultos <input type="number" name="adults" min="0" value="1"></label>
-      <label style="flex:1">Crianças <input type="number" name="children" min="0" value="0"></label>
-    </div>
-    <label>Mensagem (opcional) <textarea name="message" rows="3"></textarea></label>
-    <button type="submit">Enviar confirmação</button>
-    <div id="rsvpMsg"></div>
-  </form>
+  <main>
+    <section aria-labelledby="rsvp-title">
+      <h2 id="rsvp-title">RSVP</h2>
+      <form id="rsvpForm" novalidate>
+        <label>Nome completo
+          <input name="name" autocomplete="name" required>
+        </label>
+        <label>E-mail
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label>Telefone/WhatsApp
+          <input name="phone" autocomplete="tel">
+        </label>
+        <label>Vai comparecer?
+          <select name="attending" required>
+            <option value="">Selecione…</option>
+            <option>Sim</option>
+            <option>Não</option>
+          </select>
+        </label>
+        <div class="row">
+          <label style="flex:1">Adultos
+            <input type="number" name="adults" min="0" value="1" inputmode="numeric">
+          </label>
+          <label style="flex:1">Crianças
+            <input type="number" name="children" min="0" value="0" inputmode="numeric">
+          </label>
+        </div>
+        <label>Mensagem (opcional)
+          <textarea name="message" rows="3" placeholder="Alguma observação, restrição alimentar, etc."></textarea>
+        </label>
+        <button type="submit">Enviar confirmação</button>
+        <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:.5rem"></div>
+      </form>
+    </section>
 
-  <h2>Lista de Presentes</h2>
-  <div id="gifts" class="grid"></div>
-  <div id="giftMsg"></div>
+    <section aria-labelledby="gifts-title">
+      <h2 id="gifts-title">Lista de Presentes</h2>
+      <p class="muted">Os itens disponíveis aparecem abaixo. Quando esgotar, somem automaticamente.</p>
+      <div id="gifts" class="grid" aria-live="polite">
+        <small class="muted">Carregando…</small>
+      </div>
+      <div id="giftMsg" role="status" aria-live="polite" style="margin-top:.5rem"></div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="tag">Gabivana Wedding</span>
+  </footer>
 
   <script>
-    const API = 'https://script.google.com/macros/s/AKfycbw6oz7zzjBRWDJHiQGVPLrSPRlQDWmbQvH6p7Ju57iKEGgKpGs3ZFiZts4v3FWB0Qutgg/exec'; // <- cole a URL do Apps Script Web App aqui
+    // 🔗 Cole aqui a URL do seu Apps Script Web App (produção) que TERMINA EM /exec
+    const API = 'https://script.google.com/macros/s/AKfycbw6oz7zzjBRWDJHiQGVPLrSPRlQDWmbQvH6p7Ju57iKEGgKpGs3ZFiZts4v3FWB0Qutgg/exec';
 
     const giftsEl = document.getElementById('gifts');
     const giftMsg = document.getElementById('giftMsg');
     const rsvpForm = document.getElementById('rsvpForm');
     const rsvpMsg = document.getElementById('rsvpMsg');
 
+    function formatBRL(v) {
+      if (v === null || v === undefined || v === '') return '';
+      const num = Number(String(v).replace(',', '.'));
+      if (isNaN(num)) return String(v);
+      return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     async function loadGifts() {
       giftsEl.innerHTML = '<small class="muted">Carregando…</small>';
       try {
-        const res = await fetch(API + '?action=gifts');
-        const data = await res.json();
-        const gifts = data.gifts || [];
-        if (!gifts.length) {
-          giftsEl.innerHTML = '<small class="muted">Todos os presentes já foram escolhidos. Obrigado! 💚</small>';
+        const res = await fetch(API + '?action=gifts', { method: 'GET' });
+        // se a permissão estiver errada, o GAS pode devolver HTML (login); tratamos isso
+        const ct = res.headers.get('content-type') || '';
+        const text = await res.text();
+        if (!ct.includes('application/json')) {
+          giftsEl.innerHTML = '<span class="err">Erro ao carregar presentes (verifique permissões do Apps Script e se a URL termina em /exec).</span>';
+          console.warn('Resposta não JSON do GAS:', text.slice(0, 500));
           return;
         }
-        giftsEl.innerHTML = gifts.map(g => `
-          <div class="card">
-            ${g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : ''}
-            <h3>${g.title}</h3>
-            ${g.description ? `<p><small class="muted">${g.description}</small></p>` : ''}
-            ${g.price ? `<p><strong>R$ ${g.price}</strong></p>` : ''}
-            <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
-            <div class="row">
-              <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}">
-              <button onclick="reserve('${g.id}')">Reservar</button>
-            </div>
-            ${g.buy_link ? `<p><a href="${g.buy_link}" target="_blank">Ver detalhe/loja</a></p>` : ''}
-          </div>
-        `).join('');
+        const data = JSON.parse(text);
+        const gifts = data.gifts || [];
+        if (!gifts.length) {
+          giftsEl.innerHTML = '<div class="card"><strong>Todos os presentes já foram escolhidos 🎉</strong><p class="muted">Muito obrigado pelo carinho!</p></div>';
+          return;
+        }
+        giftsEl.innerHTML = gifts.map(g => {
+          const price = g.price ? `<p><strong>${formatBRL(g.price)}</strong></p>` : '';
+          const desc = g.description ? `<p class="muted">${g.description}</p>` : '';
+          const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
+          const shop = g.buy_link ? `<p><a href="${g.buy_link}" target="_blank" rel="noopener">Ver detalhe/loja</a></p>` : '';
+          return `
+            <article class="card" aria-label="${g.title}">
+              ${img}
+              <h3>${g.title}</h3>
+              ${desc}
+              ${price}
+              <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
+              <div class="row" role="group" aria-label="Reservar ${g.title}">
+                <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}" aria-label="Quantidade para reservar">
+                <button type="button" onclick="reserve('${g.id}')">Reservar</button>
+              </div>
+              ${shop}
+            </article>
+          `;
+        }).join('');
       } catch (e) {
-        giftsEl.innerHTML = '<span class="err">Erro ao carregar presentes.</span>';
+        console.error(e);
+        giftsEl.innerHTML = '<span class="err">Erro de conexão ao carregar presentes.</span>';
       }
     }
 
+    // POST urlencoded (sem header Content-Type explícito) -> evita preflight/CORS
     async function reserve(gift_id) {
       giftMsg.textContent = '';
       const qtyInput = document.getElementById('qty_' + gift_id);
-      const qty = Number(qtyInput?.value || 1);
+      const qty = Math.max(1, Number(qtyInput?.value || 1));
+
       const name = prompt('Seu nome completo:') || '';
       const email = prompt('Seu e-mail (para confirmação):') || '';
-      if (!name || !email) { giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>'; return; }
+      if (!name || !email) {
+        giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>';
+        return;
+      }
 
       try {
-        const res = await fetch(API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action:'reserve', gift_id, qty, name, email })
+        const body = new URLSearchParams({
+          action: 'reserve',
+          gift_id: gift_id,
+          qty: String(qty),
+          name: name,
+          email: email
         });
-        const data = await res.json();
+        const res = await fetch(API, { method: 'POST', body });
+        const ct = res.headers.get('content-type') || '';
+        const txt = await res.text();
+        if (!ct.includes('application/json')) {
+          giftMsg.innerHTML = '<span class="err">Erro ao reservar (verifique o Apps Script).</span>';
+          console.warn('Resposta não JSON (reserve):', txt.slice(0, 500));
+          await loadGifts();
+          return;
+        }
+        const data = JSON.parse(txt);
         if (data.ok) {
           giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💚</span>';
-          await loadGifts(); // recarrega para “sumir” da lista se zerou
+          await loadGifts(); // recarrega para atualizar "Disponíveis"
         } else {
           giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
           await loadGifts();
         }
       } catch (e) {
+        console.error(e);
         giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
       }
     }
@@ -116,16 +196,31 @@
     rsvpForm.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       rsvpMsg.textContent = '';
-      const fd = new FormData(rsvpForm);
-      const payload = Object.fromEntries(fd.entries());
-      payload.action = 'rsvp';
+
+      // validação mínima
+      const required = ['name','email','attending'];
+      for (const n of required) {
+        const el = rsvpForm.elements[n];
+        if (!el || !el.value) {
+          rsvpMsg.innerHTML = '<span class="err">Preencha os campos obrigatórios.</span>';
+          el?.focus();
+          return;
+        }
+      }
+
       try {
-        const res = await fetch(API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
+        const fd = new FormData(rsvpForm);
+        fd.append('action', 'rsvp');
+        const body = new URLSearchParams(fd);
+        const res = await fetch(API, { method: 'POST', body });
+        const ct = res.headers.get('content-type') || '';
+        const txt = await res.text();
+        if (!ct.includes('application/json')) {
+          rsvpMsg.innerHTML = '<span class="err">Erro ao enviar RSVP (verifique o Apps Script).</span>';
+          console.warn('Resposta não JSON (rsvp):', txt.slice(0, 500));
+          return;
+        }
+        const data = JSON.parse(txt);
         if (data.ok) {
           rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
           rsvpForm.reset();
@@ -133,10 +228,12 @@
           rsvpMsg.innerHTML = '<span class="err">Não foi possível enviar o RSVP.</span>';
         }
       } catch (e) {
+        console.error(e);
         rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
       }
     });
 
+    // carrega a lista de presentes ao abrir
     loadGifts();
   </script>
 </body>
