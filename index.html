@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Casamento Gabivana — RSVP & Presentes</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 0; padding: 1rem; max-width: 960px; margin-inline: auto; }
+    h1,h2 { margin: .5rem 0; }
+    form, .card { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; margin: .75rem 0; }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .card img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
+    .row { display: flex; gap: .5rem; align-items: center; }
+    label { display: block; font-size: .9rem; margin: .25rem 0; }
+    input, select, textarea, button { width: 100%; padding: .6rem; border: 1px solid #ccc; border-radius: 8px; }
+    button { cursor: pointer; }
+    small.muted { color: #666; }
+    .ok { color: #0a7; }
+    .err { color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>Casamento Gabivana</h1>
+  <p>Confirme sua presença e, se quiser, escolha um presente ♥</p>
+
+  <h2>RSVP</h2>
+  <form id="rsvpForm">
+    <label>Nome completo <input name="name" required></label>
+    <label>E-mail <input type="email" name="email" required></label>
+    <label>Telefone/WhatsApp <input name="phone"></label>
+    <label>Vai comparecer?
+      <select name="attending" required>
+        <option value="">Selecione…</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+    </label>
+    <div class="row">
+      <label style="flex:1">Adultos <input type="number" name="adults" min="0" value="1"></label>
+      <label style="flex:1">Crianças <input type="number" name="children" min="0" value="0"></label>
+    </div>
+    <label>Mensagem (opcional) <textarea name="message" rows="3"></textarea></label>
+    <button type="submit">Enviar confirmação</button>
+    <div id="rsvpMsg"></div>
+  </form>
+
+  <h2>Lista de Presentes</h2>
+  <div id="gifts" class="grid"></div>
+  <div id="giftMsg"></div>
+
+  <script>
+    const API = 'https://script.google.com/macros/s/AKfycbw6oz7zzjBRWDJHiQGVPLrSPRlQDWmbQvH6p7Ju57iKEGgKpGs3ZFiZts4v3FWB0Qutgg/exec'; // <- cole a URL do Apps Script Web App aqui
+
+    const giftsEl = document.getElementById('gifts');
+    const giftMsg = document.getElementById('giftMsg');
+    const rsvpForm = document.getElementById('rsvpForm');
+    const rsvpMsg = document.getElementById('rsvpMsg');
+
+    async function loadGifts() {
+      giftsEl.innerHTML = '<small class="muted">Carregando…</small>';
+      try {
+        const res = await fetch(API + '?action=gifts');
+        const data = await res.json();
+        const gifts = data.gifts || [];
+        if (!gifts.length) {
+          giftsEl.innerHTML = '<small class="muted">Todos os presentes já foram escolhidos. Obrigado! 💚</small>';
+          return;
+        }
+        giftsEl.innerHTML = gifts.map(g => `
+          <div class="card">
+            ${g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : ''}
+            <h3>${g.title}</h3>
+            ${g.description ? `<p><small class="muted">${g.description}</small></p>` : ''}
+            ${g.price ? `<p><strong>R$ ${g.price}</strong></p>` : ''}
+            <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
+            <div class="row">
+              <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}">
+              <button onclick="reserve('${g.id}')">Reservar</button>
+            </div>
+            ${g.buy_link ? `<p><a href="${g.buy_link}" target="_blank">Ver detalhe/loja</a></p>` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        giftsEl.innerHTML = '<span class="err">Erro ao carregar presentes.</span>';
+      }
+    }
+
+    async function reserve(gift_id) {
+      giftMsg.textContent = '';
+      const qtyInput = document.getElementById('qty_' + gift_id);
+      const qty = Number(qtyInput?.value || 1);
+      const name = prompt('Seu nome completo:') || '';
+      const email = prompt('Seu e-mail (para confirmação):') || '';
+      if (!name || !email) { giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>'; return; }
+
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action:'reserve', gift_id, qty, name, email })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💚</span>';
+          await loadGifts(); // recarrega para “sumir” da lista se zerou
+        } else {
+          giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
+          await loadGifts();
+        }
+      } catch (e) {
+        giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
+      }
+    }
+    window.reserve = reserve;
+
+    rsvpForm.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      rsvpMsg.textContent = '';
+      const fd = new FormData(rsvpForm);
+      const payload = Object.fromEntries(fd.entries());
+      payload.action = 'rsvp';
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
+          rsvpForm.reset();
+        } else {
+          rsvpMsg.innerHTML = '<span class="err">Não foi possível enviar o RSVP.</span>';
+        }
+      } catch (e) {
+        rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
+      }
+    });
+
+    loadGifts();
+  </script>
+</body>
+</html>
