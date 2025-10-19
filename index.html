@@ -12,8 +12,8 @@
 
   <style>
     :root{
-      --bg: #faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#2e7d32;
-      --brand-weak:#e5f3e8; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
+      --bg: #faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
+      --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
       /* 👉 troque a URL abaixo pela sua imagem */
       --bg-photo: url("img/foto-fundo.JPG");
       --overlay-light: rgba(250,247,245,.78);
@@ -34,7 +34,7 @@
       transform:translateZ(0); /* evita flicker em alguns browsers */
     }
     @media (prefers-color-scheme: dark){
-      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#1c2a20; }
+      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; ---weak:#2a0d1f; }
       body::before{
         background:
           linear-gradient(var(--overlay-dark),var(--overlay-dark)),
@@ -59,7 +59,7 @@
       border-radius:999px; padding:.35rem; box-shadow:var(--shadow); }
     .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
     .nav a:hover{ background:#f5f5f5; text-decoration:none }
-    .nav a.primary{ background:var(--brand); color:#fff } .nav a.primary:hover{ background:#256528 }
+    .nav a.primary{ background:var(--brand); color:#fff } .nav a.primary:hover{ background:#C20068 }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
     section{ margin:2rem 0 }
@@ -84,7 +84,7 @@
     }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
     .btn-primary{ border-color:transparent; background:var(--brand); color:#fff; box-shadow:0 4px 14px rgba(46,125,50,.25) }
-    .btn-primary:hover{ background:#256528 }
+    .btn-primary:hover{ background:#C20068 }
     .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
     .btn-outline:hover{ background:var(--brand-weak) }
 
