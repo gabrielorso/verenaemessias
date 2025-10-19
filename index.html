@@ -5,122 +5,105 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Casamento Verena & Messias — Confirmação & Presentes</title>
   <meta name="description" content="Confirmação de presença e lista de presentes do casamento." />
-  <!-- Tipografia elegante (opcional) -->
+  <!-- Tipografia -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --bg: #faf7f5;
-      --card: #ffffff;
-      --text: #1f2937;
-      --muted: #5f6b7a;
-      --brand: #2e7d32;       /* verde elegante */
-      --brand-weak: #e5f3e8;
-      --border: #e7e3de;
-      --radius: 14px;
-      --shadow: 0 6px 20px rgba(17, 24, 39, .06);
+    :root{
+      --bg: #faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#2e7d32;
+      --brand-weak:#e5f3e8; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
+      /* 👉 troque a URL abaixo pela sua imagem */
+      --bg-photo: url("img/foto-fundo.jpg");
+      --overlay-light: rgba(250,247,245,.78);
+      --overlay-dark: rgba(17,20,22,.70);
     }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0; color: var(--text); background: var(--bg);
-      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      line-height: 1.45;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;color:var(--text);background:var(--bg);
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45;
     }
-    a { color: var(--brand); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    /* Cabeçalho com hero suave */
-    header {
-      padding: 4rem 1rem 2rem; text-align: center; position: relative; overflow: hidden;
-      background: radial-gradient(1000px 500px at 50% -200px, #eaf6ee 0%, rgba(234,246,238,0) 60%);
+    /* Fundo com foto + sobreposição para legibilidade */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-1;
+      background:
+        linear-gradient(var(--overlay-light),var(--overlay-light)),
+        var(--bg-photo) center/cover no-repeat fixed;
+      transform:translateZ(0); /* evita flicker em alguns browsers */
     }
-    .hero-title {
-      font-family: "Playfair Display", serif; font-weight: 700; letter-spacing: .5px;
-      font-size: clamp(1.8rem, 1.2rem + 2vw, 3rem); margin: 0 0 .5rem;
-    }
-    .hero-sub {
-      color: var(--muted); margin: 0 auto; max-width: 720px; font-size: 1.05rem;
-    }
-    .nav {
-      display: inline-flex; gap: .5rem; margin-top: 1rem; background: #fff; border: 1px solid var(--border);
-      border-radius: 999px; padding: .35rem; box-shadow: var(--shadow);
-    }
-    .nav a {
-      padding: .5rem .9rem; border-radius: 999px; font-weight: 500; color: var(--text);
-    }
-    .nav a:hover { background: #f5f5f5; text-decoration: none; }
-    .nav a.primary { background: var(--brand); color: #fff; }
-    .nav a.primary:hover { background: #256528; }
-
-    /* Conteúdo */
-    main { padding: 0 1rem 3rem; max-width: 1040px; margin-inline: auto; }
-    section { margin: 2rem 0; }
-    h2 {
-      font-family: "Playfair Display", serif; font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem);
-      margin: 0 0 .75rem;
-    }
-    p { margin: .25rem 0 .9rem; }
-
-    /* Cartões / formulários */
-    .card, form {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 1.25rem; box-shadow: var(--shadow);
-    }
-    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-    .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; background: #f4f4f4; }
-    .row { display: flex; gap: .9rem; align-items: center; }
-    label { display: block; font-size: .95rem; margin: .35rem 0; font-weight: 500; }
-    input, select, textarea {
-      width: 100%; padding: .7rem .8rem; border: 1px solid #d6d3cf; border-radius: 10px; background: #fff; font: inherit;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: 2px solid #cfe8ff; border-color: #a7d3ff;
-    }
-    .form-grid { display: grid; gap: .9rem; }
-    @media (min-width: 700px) {
-      .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    @media (prefers-color-scheme: dark){
+      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#1c2a20; }
+      body::before{
+        background:
+          linear-gradient(var(--overlay-dark),var(--overlay-dark)),
+          var(--bg-photo) center/cover no-repeat fixed;
+      }
     }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-      padding: .75rem 1rem; border-radius: 999px; border: 1px solid #d0d0d0; background: #fff; cursor: pointer;
-      font-weight: 600; transition: transform .06s ease, background .15s ease, border-color .15s ease;
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+
+    /* Cabeçalho translúcido com leve blur */
+    header{
+      padding:4rem 1rem 2rem; text-align:center; position:relative;
+      background:rgba(255,255,255,.45); border-bottom:1px solid var(--border);
+      -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
     }
-    .btn:hover { background: #f7f7f7; }
-    .btn:active { transform: translateY(1px); }
-    .btn[disabled] { opacity: .6; cursor: not-allowed; }
-
-    .btn-primary {
-      border-color: transparent; background: var(--brand); color: #fff;
-      box-shadow: 0 4px 14px rgba(46, 125, 50, .25);
+    .hero-title{
+      font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
+      font-size:clamp(1.8rem,1.2rem + 2vw,3rem); margin:0 0 .5rem;
     }
-    .btn-primary:hover { background: #256528; }
-    .btn-outline { border-color: var(--brand); color: var(--brand); background: #fff; }
-    .btn-outline:hover { background: var(--brand-weak); }
+    .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
+    .nav{ display:inline-flex; gap:.5rem; margin-top:1rem; background:#fff; border:1px solid var(--border);
+      border-radius:999px; padding:.35rem; box-shadow:var(--shadow); }
+    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
+    .nav a:hover{ background:#f5f5f5; text-decoration:none }
+    .nav a.primary{ background:var(--brand); color:#fff } .nav a.primary:hover{ background:#256528 }
 
-    .muted { color: var(--muted); }
-    .ok { color: #0e7a4e; }
-    .err { color: #b00020; }
+    main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
+    section{ margin:2rem 0 }
+    h2{ font-family:"Playfair Display",serif; font-size:clamp(1.3rem,1rem + 1.2vw,2rem); margin:0 0 .75rem }
+    p{ margin:.25rem 0 .9rem }
 
-    .tag { display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color: var(--muted); background:#fff; }
+    .card, form{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow) }
+    .grid{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)) }
+    .card img{ width:100%; height:180px; object-fit:cover; border-radius:10px; background:#f4f4f4 }
+    .row{ display:flex; gap:.9rem; align-items:center }
+    label{ display:block; font-size:.95rem; margin:.35rem 0; font-weight:500 }
+    input,select,textarea{
+      width:100%; padding:.7rem .8rem; border:1px solid #d6d3cf; border-radius:10px; background:#fff; font:inherit;
+    }
+    input:focus,select:focus,textarea:focus{ outline:2px solid #cfe8ff; border-color:#a7d3ff }
+    .form-grid{ display:grid; gap:.9rem } @media(min-width:700px){ .form-grid.cols-2{ grid-template-columns:1fr 1fr } }
 
-    footer { padding: 2rem 1rem; text-align: center; color: var(--muted); font-size: .95rem; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.75rem 1rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer;
+      font-weight:600; transition:transform .06s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
+    .btn-primary{ border-color:transparent; background:var(--brand); color:#fff; box-shadow:0 4px 14px rgba(46,125,50,.25) }
+    .btn-primary:hover{ background:#256528 }
+    .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
+    .btn-outline:hover{ background:var(--brand-weak) }
 
-    /* Skeleton simples para loading */
-    .skeleton { background: linear-gradient(90deg, #eee, #f7f7f7, #eee); background-size: 200% 100%;
-      animation: shimmer 1.2s infinite; border-radius: 10px; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .muted{ color:var(--muted) } .ok{ color:#0e7a4e } .err{ color:#b00020 }
+    .tag{ display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color:var(--muted); background:#fff }
+    footer{ padding:2rem 1rem; text-align:center; color:var(--muted); font-size:.95rem }
 
-    /* Dark mode elegante */
-    @media (prefers-color-scheme: dark) {
-      :root { --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#1c2a20; }
-      .nav { background: var(--card); }
-      .btn { background: #1a1f23; border-color: #2a3036; }
-      .btn:hover { background: #20262b; }
-      .btn-outline { background: transparent; }
+    /* Skeletons (loading) */
+    .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%;
+      animation:shimmer 1.2s infinite; border-radius:10px }
+    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* Dark tune */
+    @media(prefers-color-scheme: dark){
+      header{ background:rgba(22,26,29,.55); border-color:var(--border); }
+      .nav{ background:var(--card) }
+      .btn{ background:#1a1f23; border-color:#2a3036 }
+      .btn:hover{ background:#20262b }
+      .btn-outline{ background:transparent }
     }
   </style>
 </head>
@@ -173,7 +156,7 @@
           <textarea name="message" rows="3" placeholder="Alguma observação, restrição alimentar, etc."></textarea>
         </label>
 
-        <div class="row" style="justify-content: space-between; gap:.6rem; margin-top:.5rem;">
+        <div class="row" style="justify-content:space-between; gap:.6rem; margin-top:.5rem;">
           <small class="muted">Suas informações são usadas apenas para a organização do evento.</small>
           <button id="rsvpBtn" type="submit" class="btn btn-primary">Enviar confirmação</button>
         </div>
@@ -185,7 +168,6 @@
       <h2 id="gifts-title">Lista de Presentes</h2>
       <p class="muted">Os itens disponíveis aparecem abaixo. Quando esgotar, somem automaticamente.</p>
 
-      <!-- Skeleton inicial -->
       <div id="giftsGrid" class="grid" aria-live="polite">
         <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:60%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:80%;margin-top:8px;"></div></div>
         <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:70%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:65%;margin-top:8px;"></div></div>
@@ -209,34 +191,32 @@
     const rsvpMsg   = document.getElementById('rsvpMsg');
     const rsvpBtn   = document.getElementById('rsvpBtn');
 
-    function formatBRL(v) {
+    function formatBRL(v){
       if (v === null || v === undefined || v === '') return '';
       const num = Number(String(v).replace(',', '.'));
-      if (isNaN(num)) return String(v);
-      return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      return isNaN(num) ? String(v) : num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     }
 
-    async function loadGifts() {
-      try {
-        // quebra-cache simples
-        const res = await fetch(API + '?action=gifts&ts=' + Date.now(), { method: 'GET' });
+    async function loadGifts(){
+      try{
+        const res = await fetch(API + '?action=gifts&ts=' + Date.now(), { method:'GET' });
         const ct = res.headers.get('content-type') || '';
         const text = await res.text();
 
-        if (!ct.includes('application/json')) {
+        if (!ct.includes('application/json')){
           giftsGrid.innerHTML = '<div class="card err">Erro ao carregar presentes (verifique permissões do Apps Script e se a URL termina em /exec).</div>';
-          console.warn('Resposta não JSON do GAS:', text.slice(0, 500));
+          console.warn('Resposta não JSON do GAS:', text.slice(0,500));
           return;
         }
 
         const data = JSON.parse(text);
         const gifts = data.gifts || [];
-        if (!gifts.length) {
+        if (!gifts.length){
           giftsGrid.innerHTML = '<div class="card"><strong>Todos os presentes já foram escolhidos 🎉</strong><p class="muted">Muito obrigado pelo carinho!</p></div>';
           return;
         }
 
-        giftsGrid.innerHTML = gifts.map(g => {
+        giftsGrid.innerHTML = gifts.map(g=>{
           const price = g.price ? `<p><strong>${formatBRL(g.price)}</strong></p>` : '';
           const desc  = g.description ? `<p class="muted">${g.description}</p>` : '';
           const img   = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
@@ -256,65 +236,59 @@
             </article>
           `;
         }).join('');
-      } catch (e) {
+      }catch(e){
         console.error(e);
         giftsGrid.innerHTML = '<div class="card err">Erro de conexão ao carregar presentes.</div>';
       }
     }
 
-    // POST urlencoded (sem header Content-Type explícito) -> evita preflight/CORS
-    async function reserve(gift_id, btnEl) {
+    async function reserve(gift_id, btnEl){
       giftMsg.textContent = '';
-      const qtyInput = document.getElementById('qty_' + gift_id);
+      const qtyInput = document.getElementById('qty_'+gift_id);
       const qty = Math.max(1, Number(qtyInput?.value || 1));
-
       const name = prompt('Seu nome completo:') || '';
       const email = prompt('Seu e-mail (para confirmação):') || '';
-      if (!name || !email) {
-        giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>';
-        return;
-      }
+      if (!name || !email){ giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>'; return; }
 
-      try {
-        if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
+      try{
+        if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
         const body = new URLSearchParams({ action:'reserve', gift_id, qty:String(qty), name, email });
-        const res  = await fetch(API, { method: 'POST', body });
+        const res  = await fetch(API, { method:'POST', body });
         const ct   = res.headers.get('content-type') || '';
         const txt  = await res.text();
 
-        if (!ct.includes('application/json')) {
+        if (!ct.includes('application/json')){
           giftMsg.innerHTML = '<span class="err">Erro ao reservar (verifique o Apps Script).</span>';
-          console.warn('Resposta não JSON (reserve):', txt.slice(0, 500));
-          await loadGifts();
-          return;
+          console.warn('Resposta não JSON (reserve):', txt.slice(0,500));
+          await loadGifts(); return;
         }
 
         const data = JSON.parse(txt);
-        if (data.ok) {
+        if (data.ok){
           giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💚</span>';
           await loadGifts();
         } else {
           giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
           await loadGifts();
         }
-      } catch (e) {
+      }catch(e){
         console.error(e);
         giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-      } finally {
-        if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
+      }finally{
+        if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
       }
     }
     window.reserve = reserve;
 
-    rsvpForm.addEventListener('submit', async (ev) => {
+    rsvpForm.addEventListener('submit', async (ev)=>{
       ev.preventDefault();
       rsvpMsg.textContent = '';
       rsvpBtn.disabled = true; rsvpBtn.textContent = 'Enviando…';
 
       const required = ['name','email','attending'];
-      for (const n of required) {
+      for (const n of required){
         const el = rsvpForm.elements[n];
-        if (!el || !el.value) {
+        if (!el || !el.value){
           rsvpMsg.innerHTML = '<span class="err">Preencha os campos obrigatórios.</span>';
           el?.focus();
           rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
@@ -322,38 +296,33 @@
         }
       }
 
-      try {
-        const fd = new FormData(rsvpForm);
-        fd.append('action', 'rsvp');
-        const body = new URLSearchParams(fd);
-        const res  = await fetch(API, { method: 'POST', body });
-        const ct   = res.headers.get('content-type') || '';
-        const txt  = await res.text();
+      try{
+        const fd = new FormData(rsvpForm); fd.append('action','rsvp');
+        const res = await fetch(API, { method:'POST', body:new URLSearchParams(fd) });
+        const ct  = res.headers.get('content-type') || ''; const txt = await res.text();
 
-        if (!ct.includes('application/json')) {
+        if (!ct.includes('application/json')){
           rsvpMsg.innerHTML = '<span class="err">Erro ao enviar RSVP (verifique o Apps Script).</span>';
-          console.warn('Resposta não JSON (rsvp):', txt.slice(0, 500));
+          console.warn('Resposta não JSON (rsvp):', txt.slice(0,500));
           return;
         }
 
         const data = JSON.parse(txt);
-        if (data.ok) {
+        if (data.ok){
           rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
           rsvpForm.reset();
-          // rola suave até os presentes
-          document.querySelector('.nav a[href="#gifts"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          document.querySelector('.nav a[href="#gifts"]')?.scrollIntoView({ behavior:'smooth', block:'center' });
         } else {
           rsvpMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível enviar o RSVP.') + '</span>';
         }
-      } catch (e) {
+      }catch(e){
         console.error(e);
         rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-      } finally {
+      }finally{
         rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
       }
     });
 
-    // carrega a lista de presentes ao abrir
     loadGifts();
   </script>
 </body>
