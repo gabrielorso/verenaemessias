@@ -26,6 +26,9 @@
       font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
 
+    /* utilitário de largura (usado no header) */
+    .container{ max-width:1040px; margin-inline:auto; padding-inline:1rem; }
+
     /* Fundo com foto + sobreposição */
     body::before{
       content:""; position:fixed; inset:0; z-index:-1;
@@ -43,24 +46,20 @@
 
     a{color:var(--brand); text-decoration:none} a:hover{text-decoration:underline}
 
-    /* Cabeçalho claro, fixo e MENOR */
+    /* Cabeçalho claro, fixo e mais baixo */
     header{
-      /* ↓ reduzi o padding */
-      padding:2.25rem 1rem 1rem;
+      padding:2.25rem 0 1rem; /* padding horizontal virou 0; quem dá respiro é .container */
       text-align:center; position:fixed; inset:0 0 auto 0; z-index:1000;
       background:var(--header-tint); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
       transition:padding .22s ease, box-shadow .22s ease;
       box-shadow:0 8px 24px rgba(17,24,39,.08);
     }
-    header.compact{
-      padding:.55rem 1rem; background:var(--header-tint);
-      -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
-    }
+    header.compact{ padding:.55rem 0; background:var(--header-tint); }
 
     .hero-title{
       font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
-      font-size:clamp(1.7rem,1.1rem + 1.8vw,2.6rem); /* ↓ um pouco menor */
+      font-size:clamp(1.7rem,1.1rem + 1.8vw,2.6rem);
       margin:0 0 .45rem;
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.02rem; }
@@ -83,18 +82,15 @@
 
     /* Títulos claros */
     section>h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
-
     /* Só o parágrafo acima da grade de presentes fica claro */
     #gifts>.muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
-
     /* Dentro dos cards: descrição e "Disponíveis:" = mesma cor do título (não branco) */
     #gifts .card .muted{ color:var(--text); text-shadow:none }
 
-    /* Espaçador do header (altura dinâmica via JS, com fallback menor) */
+    /* Espaçador do header (altura dinâmica via JS, com fallback) */
     #header-spacer{ height:120px }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
-    /* Offset de âncoras: usa variável dinâmica calculada no JS */
     section{ margin:2rem 0; scroll-margin-top:var(--anchor-offset, 96px) }
 
     h2{ font-family:"Playfair Display",serif; font-size:clamp(1.3rem,1rem + 1.2vw,2rem); margin:0 0 .75rem }
@@ -126,12 +122,14 @@
 </head>
 <body>
   <header>
-    <h1 class="hero-title">Verena & Messias</h1>
-    <p class="hero-sub">Confirme sua presença e escolha um presente com carinho. 🩷</p>
-    <nav class="nav" aria-label="Seções">
-      <a id="nav-rsvp" href="#rsvp" class="primary">Confirmar Presença</a>
-      <a id="nav-gifts" href="#gifts">Lista de Presentes</a>
-    </nav>
+    <div class="container">
+      <h1 class="hero-title">Verena & Messias</h1>
+      <p class="hero-sub">Confirme sua presença e escolha um presente com carinho. 🩷</p>
+      <nav class="nav" aria-label="Seções">
+        <a id="nav-rsvp" href="#rsvp" class="primary">Confirmar Presença</a>
+        <a id="nav-gifts" href="#gifts">Lista de Presentes</a>
+      </nav>
+    </div>
   </header>
 
   <!-- Espaçador do header fixo -->
@@ -212,19 +210,16 @@
         { id:'rsvp',  el:null, link:navRsvp },
         { id:'gifts', el:null, link:navGifts }
       ];
-      let H_EXP = 120, H_COMP = 64; // fallbacks conservadores
+      let H_EXP = 120, H_COMP = 64; // fallbacks
 
       function cssVar(name, value){ document.documentElement.style.setProperty(name, value); }
 
       function measureHeights(){
         if (!header) return;
-        // mede expandido
         header.classList.remove('compact');
         const expanded = header.getBoundingClientRect().height;
-        // mede compacto
         header.classList.add('compact');
         const compact = header.getBoundingClientRect().height;
-        // volta ao estado inicial (topo = expandido)
         header.classList.remove('compact');
 
         H_EXP = Math.round(expanded);
@@ -240,7 +235,7 @@
       }
 
       function onScroll(){
-        const threshold = 40; // compacta cedo
+        const threshold = 40;
         if (window.scrollY > threshold){
           header.classList.add('compact');
           if (spacer) spacer.style.height = H_COMP + 'px';
@@ -271,18 +266,13 @@
         setActive(active.link);
       }
 
-      // mede ao carregar DOM
       window.addEventListener('DOMContentLoaded', measureHeights, { once:true });
-      // mede de novo quando as fontes web terminarem (evita erro de altura)
       if (document.fonts && document.fonts.ready){ document.fonts.ready.then(measureHeights); }
-      // remede em resize
       window.addEventListener('resize', measureHeights);
-      // observa mudanças no próprio header (seguro/leve)
       if (window.ResizeObserver){
         const ro = new ResizeObserver(()=>measureHeights());
         ro.observe(header);
       }
-      // scroll listener
       window.addEventListener('scroll', onScroll, { passive:true });
     })();
 
@@ -401,23 +391,4 @@
           return;
         }
 
-        const data = JSON.parse(txt);
-        if (data.ok){
-          rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
-          rsvpForm.reset();
-          document.querySelector('.nav a[href="#gifts"]')?.scrollIntoView({ behavior:'smooth', block:'center' });
-        } else {
-          rsvpMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível enviar o RSVP.') + '</span>';
-        }
-      }catch(e){
-        console.error(e);
-        rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-      }finally{
-        rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
-      }
-    });
-
-    loadGifts();
-  </script>
-</body>
-</html>
+        const
