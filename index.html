@@ -78,14 +78,40 @@
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
 
+    /* NAV – chips visíveis no mobile (claro e escuro) */
     .nav{
-      display:inline-flex; gap:.5rem; margin-top:1rem; background:#fff; border:1px solid var(--border);
-      border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
+      display:inline-flex; gap:.5rem; flex-wrap:wrap;
+      background:transparent; /* antes era #fff */
+      border:0;               /* remove a borda externa */
+      padding:0;              /* remove o acolchoado externo */
+      box-shadow:none;        /* sem sombra externa */
     }
-    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
-    .nav a:hover{ background:#f5f5f5; text-decoration:none; }
-    .nav a.primary{ background:var(--brand); color:#fff; }
+    .nav a{
+      padding:.55rem 1rem;
+      border-radius:999px;
+      font-weight:600;
+      color:var(--text);
+      background:#f2f2f2;           /* chip cinza claro p/ ficar visível */
+      border:1px solid var(--border);
+    }
+    .nav a:hover{ background:#eaeaea; text-decoration:none; }
+    .nav a.primary{
+      background:var(--brand);
+      color:#fff;
+      border-color:transparent;
+    }
     .nav a.primary:hover{ background:#C20068; }
+
+
+    /* modo escuro: chips mais escuros */
+    @media (prefers-color-scheme: dark){
+      .nav{ background:transparent; }
+      .nav a{
+        background:#1f2429;
+        border-color:#2a3036;
+      }
+      .nav a:hover{ background:#252b31; }
+    }
 
     /* espaçador para compensar header fixo (altura ajustada via JS) */
     #header-spacer{ height:var(--h-expanded, 160px); }
