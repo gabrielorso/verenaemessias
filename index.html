@@ -14,9 +14,12 @@
     :root{
       --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
       --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
-      --bg-photo:url("img/foto-fundo.JPG");
+      --bg-photo:url("img/foto-fundo.JPG");           /* desktop */
+      --bg-photo-mobile: var(--bg-photo);              /* pode trocar por uma versão vertical */
       --overlay-light:rgba(250,247,245,.78);
       --overlay-dark:rgba(17,20,22,.70);
+      --overlay: var(--overlay-light);                 /* troca p/ dark abaixo */
+      --bg-focal: 50% 45%;                             /* foco da foto (x y) */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -24,20 +27,48 @@
       margin:0; color:var(--text); background:var(--bg);
       font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
-    /* Fundo com foto + sobreposição para legibilidade */
+
+    /* Fundo com foto + sobreposição (camadas separadas, fácil de ajustar por breakpoint) */
     body::before{
       content:""; position:fixed; inset:0; z-index:-1;
-      background:
-        linear-gradient(var(--overlay-light),var(--overlay-light)),
-        var(--bg-photo) center/cover no-repeat fixed;
+      background-image:
+        linear-gradient(var(--overlay), var(--overlay)),
+        var(--bg-photo);
+      background-position:
+        50% 50%,
+        var(--bg-focal);
+      background-size:
+        cover,
+        cover;                 /* desktop: cobre a tela */
+      background-repeat:
+        no-repeat,
+        no-repeat;
+      background-attachment:
+        scroll,
+        fixed;                 /* parallax leve no desktop */
       transform:translateZ(0);
     }
+    /* 🌙 Dark mode: só alterna a sobreposição */
     @media (prefers-color-scheme: dark){
-      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#2a0d1f; }
+      :root{ --overlay: var(--overlay-dark); }
+    }
+    /* 📱 Mobile: mostra a foto inteira (contain) e desliga background fixed */
+    @media (max-width: 700px){
+      :root{
+        --bg-photo: var(--bg-photo-mobile);  /* se quiser outra imagem no mobile */
+        --bg-focal: 50% 30%;                 /* ajuste de enquadramento no mobile */
+      }
       body::before{
-        background:
-          linear-gradient(var(--overlay-dark),var(--overlay-dark)),
-          var(--bg-photo) center/cover no-repeat fixed;
+        background-size:
+          cover,    /* gradiente cobre tudo */
+          contain;  /* foto aparece inteira, sem corte */
+        background-attachment:
+          scroll,
+          scroll;   /* iOS/Android mais suave */
+        background-position:
+          50% 50%,
+          50% 0%;
+        background-color: var(--bg); /* cor de fundo atrás da foto se sobrar espaço */
       }
     }
 
@@ -78,39 +109,33 @@
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
 
-    /* NAV – chips visíveis no mobile (claro e escuro) */
+    /* NAV – chips responsivos */
     .nav{
-      display:inline-flex; gap:.5rem; flex-wrap:wrap;
-      background:transparent; /* antes era #fff */
-      border:0;               /* remove a borda externa */
-      padding:0;              /* remove o acolchoado externo */
-      box-shadow:none;        /* sem sombra externa */
+      /* Desktop: em linha, centralizados */
+      display:inline-grid; grid-auto-flow:column; grid-auto-columns:max-content;
+      gap:.5rem; margin-top:1rem; background:transparent; border:0; padding:0; box-shadow:none;
     }
     .nav a{
-      padding:.55rem 1rem;
-      border-radius:999px;
-      font-weight:600;
-      color:var(--text);
-      background:#f2f2f2;           /* chip cinza claro p/ ficar visível */
-      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      padding:.55rem 1rem; border-radius:999px; font-weight:600; color:var(--text);
+      background:#f2f2f2; border:1px solid var(--border);
+      white-space:nowrap;
     }
     .nav a:hover{ background:#eaeaea; text-decoration:none; }
-    .nav a.primary{
-      background:var(--brand);
-      color:#fff;
-      border-color:transparent;
-    }
+    .nav a.primary{ background:var(--brand); color:#fff; border-color:transparent; }
     .nav a.primary:hover{ background:#C20068; }
 
-
-    /* modo escuro: chips mais escuros */
-    @media (prefers-color-scheme: dark){
-      .nav{ background:transparent; }
-      .nav a{
-        background:#1f2429;
-        border-color:#2a3036;
+    /* Mobile: 2 colunas; muito estreito: 1 por linha (100%) */
+    @media (max-width: 700px){
+      .nav{
+        display:grid; grid-template-columns:1fr 1fr; gap:.5rem;
+        width:min(520px, 100% - 2rem); margin-inline:auto;
       }
-      .nav a:hover{ background:#252b31; }
+      .nav a{ padding:.6rem .8rem; font-weight:600; }
+    }
+    @media (max-width: 380px){
+      .nav{ grid-template-columns:1fr; }
+      .nav a{ width:100%; }
     }
 
     /* espaçador para compensar header fixo (altura ajustada via JS) */
@@ -139,7 +164,7 @@
     }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
     .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
-    .btn-outline:hover{ background:var(--brand-weak) }
+    .btn-outline:hover{ background:#FCE1F1 }
 
     .muted{ color:var(--muted) } .ok{ color:#0e7a4e } .err{ color:#b00020 }
     .tag{ display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color:var(--muted); background:#fff }
@@ -150,12 +175,13 @@
       animation:shimmer 1.2s infinite; border-radius:10px }
     @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-    /* Dark tune */
+    /* Dark tune (botões) */
     @media(prefers-color-scheme: dark){
-      .nav{ background:var(--card) }
       .btn{ background:#1a1f23; border-color:#2a3036 }
       .btn:hover{ background:#20262b }
       .btn-outline{ background:transparent }
+      .nav a{ background:#1f2429; border-color:#2a3036; }
+      .nav a:hover{ background:#252b31; }
     }
   </style>
 </head>
@@ -261,9 +287,8 @@
         document.documentElement.style.setProperty('--h-compact', compact + 'px');
         if (spacer) spacer.style.height = 'var(--h-expanded)';
 
-        // atualiza refs de seção
         sections.forEach(s => s.el = document.getElementById(s.id));
-        updateActiveByScroll(); // define estado inicial
+        updateActiveByScroll();
       }
 
       function onScroll(){
@@ -297,19 +322,10 @@
           if (probe >= top && probe < bottom){
             active = s; break;
           }
-          // fallback: a última que passou do topo
-          if (probe >= top) active = s;
+          if (probe >= top) active = s; // fallback: última que passou do topo
         }
         setActive(active.link);
       }
-
-      // clique nos links: rolagem suave respeitando scroll-margin-top (CSS)
-      [navRsvp, navGifts].forEach(a=>{
-        a?.addEventListener('click', (ev)=>{
-          // deixa o navegador tratar o hash, mas suaviza
-          // (se preferir 100% JS, poderíamos usar scrollIntoView)
-        });
-      });
 
       window.addEventListener('load', measureHeights, { once:true });
       window.addEventListener('resize', measureHeights);
