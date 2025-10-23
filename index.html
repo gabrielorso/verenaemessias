@@ -72,11 +72,10 @@
     a{color:var(--brand); text-decoration:none}
     a:hover{text-decoration:underline}
 
-    /* Cabeçalho translúcido com leve blur + fixo/compacto
-       >>> mesma opacidade nos dois estados <<< */
+    /* Cabeçalho translúcido fixo/compacto — claro nos dois estados */
     header{
       padding:4rem 1rem 2rem; text-align:center; position:relative;
-      background:rgba(255,255,255,.70); /* mais opaco que antes (.45) */
+      background:rgba(255,255,255,.50); /* claro */
       border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -85,14 +84,14 @@
     }
     header.compact{
       padding:.6rem 1rem;
-      background:rgba(255,255,255,.70); /* mesma opacidade do expandido */
+      background:rgba(255,255,255,.50); /* mesma transparência do expandido */
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
       border-bottom-color:rgba(0,0,0,.06);
     }
 
     @media (prefers-color-scheme: dark){
-      header{ background:rgba(22,26,29,.78); border-color:var(--border); }
-      header.compact{ background:rgba(22,26,29,.78); border-bottom-color:rgba(255,255,255,.06); }
+      header{ background:rgba(22,26,29,.55); border-color:var(--border); }
+      header.compact{ background:rgba(22,26,29,.55); border-bottom-color:rgba(255,255,255,.06); }
     }
 
     .hero-title{
@@ -131,10 +130,15 @@
       .nav a{ width:100%; }
     }
 
-    /* TITULAÇÃO das seções — agora clara */
+    /* Títulos de seção — claros */
     section > h2{
-      color:#ffffff;                        /* cor clara */
-      text-shadow:0 1px 2px rgba(0,0,0,.35);/* melhora a leitura em fundos claros/irregulares */
+      color:#ffffff;
+      text-shadow:0 1px 2px rgba(0,0,0,.35);
+    }
+    /* Texto da seção de presentes — claro apenas aqui */
+    #gifts .muted{
+      color:#ffffff;
+      text-shadow:0 1px 2px rgba(0,0,0,.35);
     }
 
     /* espaçador pra compensar o header fixo (altura ajustada via JS) */
