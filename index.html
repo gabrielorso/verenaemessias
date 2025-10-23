@@ -15,15 +15,9 @@
       --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
       --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
       --bg-photo:url("img/foto-fundo.JPG");
-      --overlay-light:rgba(250,247,245,.78);
-      --overlay-dark:rgba(17,20,22,.70);
-
-      /* enquadramento da foto */
-      --bg-pos: 50% 50%;
-      --bg-pos-mobile: 50% 20%;
-
-      /* cabeçalho CLARO e bem visível (fixo para qualquer modo) */
-      --header-tint: rgba(255,255,255,.96);
+      --overlay-light:rgba(250,247,245,.78); --overlay-dark:rgba(17,20,22,.70);
+      --bg-pos:50% 50%; --bg-pos-mobile:50% 20%;
+      --header-tint:rgba(255,255,255,.96);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -35,107 +29,74 @@
     /* Fundo com foto + sobreposição */
     body::before{
       content:""; position:fixed; inset:0; z-index:-1;
-      background-image:
-        linear-gradient(var(--overlay-light),var(--overlay-light)),
-        var(--bg-photo);
-      background-position:
-        50% 50%,
-        var(--bg-pos);
-      background-size:
-        cover,
-        cover;
-      background-repeat:
-        no-repeat,
-        no-repeat;
-      background-attachment:
-        scroll,
-        fixed;
-      transform:translateZ(0);
+      background-image:linear-gradient(var(--overlay-light),var(--overlay-light)), var(--bg-photo);
+      background-position:50% 50%, var(--bg-pos);
+      background-size:cover, cover; background-repeat:no-repeat, no-repeat;
+      background-attachment:scroll, fixed; transform:translateZ(0);
     }
-    /* modo escuro só altera a sobreposição da foto, não mexe no header */
     @media (prefers-color-scheme: dark){
-      body::before{
-        background-image:
-          linear-gradient(var(--overlay-dark),var(--overlay-dark)),
-          var(--bg-photo);
-      }
+      body::before{ background-image:linear-gradient(var(--overlay-dark),var(--overlay-dark)), var(--bg-photo); }
     }
-    @media (max-width: 700px){
-      body::before{
-        background-position:
-          50% 50%,
-          var(--bg-pos-mobile);
-        background-attachment:
-          scroll,
-          scroll;
-      }
+    @media (max-width:700px){
+      body::before{ background-position:50% 50%, var(--bg-pos-mobile); background-attachment:scroll, scroll; }
     }
 
-    a{color:var(--brand); text-decoration:none}
-    a:hover{text-decoration:underline}
+    a{color:var(--brand); text-decoration:none} a:hover{text-decoration:underline}
 
-    /* Cabeçalho claro (mesma opacidade expandido/recolhido) */
+    /* Cabeçalho claro, fixo e MENOR */
     header{
-      padding:4rem 1rem 2rem; text-align:center; position:relative;
-      background:var(--header-tint);
-      border-bottom:1px solid var(--border);
+      /* ↓ reduzi o padding */
+      padding:2.25rem 1rem 1rem;
+      text-align:center; position:fixed; inset:0 0 auto 0; z-index:1000;
+      background:var(--header-tint); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      transition: padding .25s ease, box-shadow .25s ease;
-      box-shadow: 0 8px 24px rgba(17,24,39,.08);
+      transition:padding .22s ease, box-shadow .22s ease;
+      box-shadow:0 8px 24px rgba(17,24,39,.08);
     }
     header.compact{
-      padding:.6rem 1rem;
-      background:var(--header-tint);
+      padding:.55rem 1rem; background:var(--header-tint);
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
-      border-bottom-color:rgba(0,0,0,.06);
     }
 
     .hero-title{
       font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
-      font-size:clamp(1.8rem,1.2rem + 2vw,3rem); margin:0 0 .5rem;
+      font-size:clamp(1.7rem,1.1rem + 1.8vw,2.6rem); /* ↓ um pouco menor */
+      margin:0 0 .45rem;
     }
-    .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
+    .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.02rem; }
     header.compact .hero-title{ font-size:clamp(1.2rem,.9rem + 1vw,1.6rem); margin:0; }
     header.compact .hero-sub{ display:none; }
     header.compact .nav{ margin-top:.25rem; }
 
     /* NAV – pílula branca */
     .nav{
-      display:inline-flex; gap:.5rem; margin-top:1rem;
-      background:#fff; border:1px solid var(--border);
-      border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
+      display:inline-flex; gap:.5rem; margin-top:.9rem;
+      background:#fff; border:1px solid var(--border); border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
       flex-wrap:wrap;
     }
-    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
+    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text) }
     .nav a:hover{ background:#f5f5f5; text-decoration:none }
     .nav a.primary{ background:var(--brand); color:#fff }
     .nav a.primary:hover{ background:#C20068 }
+    @media (max-width:700px){ .nav{ display:grid; grid-template-columns:1fr 1fr; gap:.35rem } .nav a{text-align:center} }
+    @media (max-width:380px){ .nav{ grid-template-columns:1fr } .nav a{ width:100% } }
 
-    /* Mobile: 2 colunas dentro da pílula; muito estreito: 1 por linha */
-    @media (max-width: 700px){
-      .nav{ display:grid; grid-template-columns:1fr 1fr; gap:.35rem; }
-      .nav a{ text-align:center; }
-    }
-    @media (max-width: 380px){
-      .nav{ grid-template-columns:1fr; }
-      .nav a{ width:100%; }
-    }
+    /* Títulos claros */
+    section>h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
 
-    /* Títulos de seção claros */
-    section > h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+    /* Só o parágrafo acima da grade de presentes fica claro */
+    #gifts>.muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
 
-    /* Só o parágrafo acima da grade (na seção presentes) fica claro */
-    #gifts > .muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35); }
+    /* Dentro dos cards: descrição e "Disponíveis:" = mesma cor do título (não branco) */
+    #gifts .card .muted{ color:var(--text); text-shadow:none }
 
-    /* Dentro dos cards: descrição e "Disponíveis:" = mesma cor do título */
-    #gifts .card .muted{ color:var(--text); text-shadow:none; }
-
-    /* espaçador do header fixo */
-    #header-spacer{ height: var(--h-expanded, 160px); }
+    /* Espaçador do header (altura dinâmica via JS, com fallback menor) */
+    #header-spacer{ height:120px }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
-    section{ margin:2rem 0; scroll-margin-top:calc(var(--h-compact, 80px) + 16px); }
+    /* Offset de âncoras: usa variável dinâmica calculada no JS */
+    section{ margin:2rem 0; scroll-margin-top:var(--anchor-offset, 96px) }
+
     h2{ font-family:"Playfair Display",serif; font-size:clamp(1.3rem,1rem + 1.2vw,2rem); margin:0 0 .75rem }
     p{ margin:.25rem 0 .9rem }
 
@@ -144,28 +105,22 @@
     .card img{ width:100%; height:180px; object-fit:cover; border-radius:10px; background:#f4f4f4 }
     .row{ display:flex; gap:.9rem; align-items:center }
     label{ display:block; font-size:.95rem; margin:.35rem 0; font-weight:500 }
-    input,select,textarea{
-      width:100%; padding:.7rem .8rem; border:1px solid #d6d3cf; border-radius:10px; background:#fff; font:inherit;
-    }
+    input,select,textarea{ width:100%; padding:.7rem .8rem; border:1px solid #d6d3cf; border-radius:10px; background:#fff; font:inherit }
     input:focus,select:focus,textarea:focus{ outline:2px solid #cfe8ff; border-color:#a7d3ff }
     .form-grid{ display:grid; gap:.9rem } @media(min-width:700px){ .form-grid.cols-2{ grid-template-columns:1fr 1fr } }
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-      padding:.75rem 1rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer;
-      font-weight:600; transition:transform .06s ease, background .15s ease, border-color .15s ease;
-    }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.75rem 1rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; font-weight:600;
+      transition:transform .06s ease, background .15s ease, border-color .15s ease }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
     .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
     .btn-outline:hover{ background:#FCE1F1 }
 
     .muted{ color:var(--muted) } .ok{ color:#0e7a4e } .err{ color:#b00020 }
     .tag{ display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color:var(--muted); background:#fff }
-
     footer{ padding:2rem 1rem; text-align:center; color:var(--muted); font-size:.95rem }
 
-    .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%;
-      animation:shimmer 1.2s infinite; border-radius:10px }
+    .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:10px }
     @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
   </style>
 </head>
@@ -179,7 +134,7 @@
     </nav>
   </header>
 
-  <!-- espaçador do header fixo -->
+  <!-- Espaçador do header fixo -->
   <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
@@ -247,81 +202,89 @@
   </footer>
 
   <script>
-    // --- Header compacto ao rolar + realce dinâmico do nav (blindado) ---
-    try{
-      (function(){
-        const header = document.querySelector('header');
-        const spacer = document.getElementById('header-spacer');
-        const navRsvp  = document.getElementById('nav-rsvp');
-        const navGifts = document.getElementById('nav-gifts');
-        const sections = [
-          { id:'rsvp',  el: null, link: navRsvp  },
-          { id:'gifts', el: null, link: navGifts }
-        ];
-        let H_EXP = 160, H_COMP = 80;
+    // --- Header compacto + offset/âncora dinâmico e estável ---
+    (function(){
+      const header = document.querySelector('header');
+      const spacer = document.getElementById('header-spacer');
+      const navRsvp  = document.getElementById('nav-rsvp');
+      const navGifts = document.getElementById('nav-gifts');
+      const sections = [
+        { id:'rsvp',  el:null, link:navRsvp },
+        { id:'gifts', el:null, link:navGifts }
+      ];
+      let H_EXP = 120, H_COMP = 64; // fallbacks conservadores
 
-        function measureHeights(){
-          if (!header) return;
-          header.classList.remove('compact');
-          const expanded = header.getBoundingClientRect().height;
+      function cssVar(name, value){ document.documentElement.style.setProperty(name, value); }
+
+      function measureHeights(){
+        if (!header) return;
+        // mede expandido
+        header.classList.remove('compact');
+        const expanded = header.getBoundingClientRect().height;
+        // mede compacto
+        header.classList.add('compact');
+        const compact = header.getBoundingClientRect().height;
+        // volta ao estado inicial (topo = expandido)
+        header.classList.remove('compact');
+
+        H_EXP = Math.round(expanded);
+        H_COMP = Math.round(compact);
+
+        cssVar('--h-expanded', H_EXP + 'px');
+        cssVar('--h-compact',  H_COMP + 'px');
+        cssVar('--anchor-offset', (Math.max(H_EXP, H_COMP) + 16) + 'px');
+        if (spacer) spacer.style.height = H_EXP + 'px';
+
+        sections.forEach(s => s.el = document.getElementById(s.id));
+        updateActiveByScroll();
+      }
+
+      function onScroll(){
+        const threshold = 40; // compacta cedo
+        if (window.scrollY > threshold){
           header.classList.add('compact');
-          const compact = header.getBoundingClientRect().height;
+          if (spacer) spacer.style.height = H_COMP + 'px';
+          cssVar('--anchor-offset', (H_COMP + 16) + 'px');
+        }else{
           header.classList.remove('compact');
-
-          H_EXP = expanded; H_COMP = compact;
-          document.documentElement.style.setProperty('--h-expanded', expanded + 'px');
-          document.documentElement.style.setProperty('--h-compact', compact + 'px');
-          if (spacer) spacer.style.height = 'var(--h-expanded)';
-
-          sections.forEach(s => s.el = document.getElementById(s.id));
-          updateActiveByScroll();
+          if (spacer) spacer.style.height = H_EXP + 'px';
+          cssVar('--anchor-offset', (H_EXP + 16) + 'px');
         }
+        updateActiveByScroll();
+      }
 
-        function onScroll(){
-          if (!header || !spacer) return;
-          const threshold = 60;
-          if (window.scrollY > threshold){
-            header.classList.add('compact');
-            spacer.style.height = 'var(--h-compact)';
-          } else {
-            header.classList.remove('compact');
-            spacer.style.height = 'var(--h-expanded)';
-          }
-          updateActiveByScroll();
+      function setActive(link){
+        [navRsvp, navGifts].forEach(a => a?.classList.remove('primary'));
+        link?.classList.add('primary');
+      }
+
+      function updateActiveByScroll(){
+        const headerH = header.classList.contains('compact') ? H_COMP : H_EXP;
+        const probe = window.scrollY + headerH + 8;
+        let active = sections[0];
+        for (const s of sections){
+          if (!s.el) continue;
+          const top = s.el.offsetTop, bottom = top + s.el.offsetHeight;
+          if (probe >= top && probe < bottom){ active = s; break; }
+          if (probe >= top) active = s;
         }
+        setActive(active.link);
+      }
 
-        function setActive(link){
-          [navRsvp, navGifts].forEach(a => a?.classList.remove('primary'));
-          link?.classList.add('primary');
-        }
-
-        function updateActiveByScroll(){
-          const y = window.scrollY;
-          const headerH = header?.classList.contains('compact') ? H_COMP : H_EXP;
-          const probe = y + (headerH || 0) + 8;
-          let active = sections[0];
-
-          for (const s of sections){
-            if (!s.el) continue;
-            const top = s.el.offsetTop;
-            const bottom = top + s.el.offsetHeight;
-            if (probe >= top && probe < bottom){ active = s; break; }
-            if (probe >= top) active = s;
-          }
-          setActive(active.link);
-        }
-
-        window.addEventListener('load', measureHeights, { once:true });
-        window.addEventListener('resize', measureHeights);
-        window.addEventListener('scroll', onScroll, { passive:true });
-
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-          if (header) header.style.transition = 'none';
-        }
-      })();
-    }catch(err){
-      console.error('Falha ao iniciar header:', err);
-    }
+      // mede ao carregar DOM
+      window.addEventListener('DOMContentLoaded', measureHeights, { once:true });
+      // mede de novo quando as fontes web terminarem (evita erro de altura)
+      if (document.fonts && document.fonts.ready){ document.fonts.ready.then(measureHeights); }
+      // remede em resize
+      window.addEventListener('resize', measureHeights);
+      // observa mudanças no próprio header (seguro/leve)
+      if (window.ResizeObserver){
+        const ro = new ResizeObserver(()=>measureHeights());
+        ro.observe(header);
+      }
+      // scroll listener
+      window.addEventListener('scroll', onScroll, { passive:true });
+    })();
 
     // 🔗 URL do Apps Script (produção) que TERMINA EM /exec
     const API = 'https://script.google.com/macros/s/AKfycbzpgKG6r1Uo9pq3CwNuoAYSQLtVVDUSHGDkLrVha6EMaXP_cBxSpADdzhSJqK_m0zR_Qg/exec';
@@ -454,7 +417,6 @@
       }
     });
 
-    // carrega a lista ao abrir
     loadGifts();
   </script>
 </body>
