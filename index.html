@@ -31,7 +31,7 @@
       background:
         linear-gradient(var(--overlay-light),var(--overlay-light)),
         var(--bg-photo) center/cover no-repeat fixed;
-      transform:translateZ(0); /* evita flicker em alguns browsers */
+      transform:translateZ(0);
     }
     @media (prefers-color-scheme: dark){
       :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#2a0d1f; }
@@ -44,17 +44,15 @@
 
     a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
 
-    /* Cabeçalho translúcido com leve blur */
+    /* Cabeçalho translúcido com leve blur + comportamento fixo/compacto */
     header{
       padding:4rem 1rem 2rem; text-align:center; position:relative;
       background:rgba(255,255,255,.45); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
-      /* >>> alterações para fixar e permitir compactar ao rolar <<< */
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       transition: padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
       box-shadow: 0 8px 24px rgba(17,24,39,.08);
     }
-    /* estado compacto ao rolar */
     header.compact{
       padding:.6rem 1rem;
       background:rgba(255,255,255,.70);
@@ -138,8 +136,8 @@
     <h1 class="hero-title">Verena & Messias</h1>
     <p class="hero-sub">Confirme sua presença e escolha um presente com carinho. 🩷</p>
     <nav class="nav" aria-label="Seções">
-      <a href="#rsvp" class="primary">Confirmar Presença</a>
-      <a href="#gifts">Lista de Presentes</a>
+      <a id="nav-rsvp" href="#rsvp" class="primary">Confirmar Presença</a>
+      <a id="nav-gifts" href="#gifts">Lista de Presentes</a>
     </nav>
   </header>
 
@@ -211,10 +209,16 @@
   </footer>
 
   <script>
-    // --- Header compacto ao rolar ---
+    // --- Header compacto ao rolar + realce dinâmico do nav ---
     (function(){
       const header = document.querySelector('header');
       const spacer = document.getElementById('header-spacer');
+      const navRsvp  = document.getElementById('nav-rsvp');
+      const navGifts = document.getElementById('nav-gifts');
+      const sections = [
+        { id: 'rsvp',  link: navRsvp  },
+        { id: 'gifts', link: navGifts }
+      ];
 
       function measureHeights(){
         header.classList.remove('compact');
@@ -231,7 +235,7 @@
       }
 
       function onScroll(){
-        const threshold = 60; // ajuste se quiser recolher antes/depois
+        const threshold = 60;
         if (window.scrollY > threshold){
           header.classList.add('compact');
           if (spacer) spacer.style.height = 'var(--h-compact)';
@@ -240,6 +244,41 @@
           if (spacer) spacer.style.height = 'var(--h-expanded)';
         }
       }
+
+      // Realça o link da seção visível
+      function setActive(linkToActivate){
+        [navRsvp, navGifts].forEach(a => a.classList.remove('primary'));
+        if (linkToActivate) linkToActivate.classList.add('primary');
+      }
+
+      // IntersectionObserver para alternar o botão ativo
+      const io = new IntersectionObserver((entries)=>{
+        // escolhe a seção mais visível
+        let best = null, bestRatio = 0;
+        for (const entry of entries){
+          if (entry.isIntersecting && entry.intersectionRatio > bestRatio){
+            best = entry; bestRatio = entry.intersectionRatio;
+          }
+        }
+        if (best){
+          const sec = sections.find(s => s.id === best.target.id);
+          setActive(sec?.link);
+        }
+      }, {
+        // considera a área central da tela como "alvo" principal
+        root: null,
+        threshold: [0.25, 0.5, 0.75],
+        rootMargin: '-20% 0px -40% 0px' // favorece a área superior/central
+      });
+
+      sections.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (el) io.observe(el);
+      });
+
+      // ao clicar, já marca o botão correspondente
+      navRsvp?.addEventListener('click', ()=> setActive(navRsvp));
+      navGifts?.addEventListener('click', ()=> setActive(navGifts));
 
       window.addEventListener('load', measureHeights, { once:true });
       window.addEventListener('resize', measureHeights);
@@ -258,12 +297,6 @@
     const rsvpForm  = document.getElementById('rsvpForm');
     const rsvpMsg   = document.getElementById('rsvpMsg');
     const rsvpBtn   = document.getElementById('rsvpBtn');
-
-    function formatBRL(v){
-      if (v === null || v === undefined || v === '') return '';
-      const num = Number(String(v).replace(',', '.'));
-      return isNaN(num) ? String(v) : num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    }
 
     async function loadGifts(){
       try{
@@ -285,22 +318,18 @@
         }
 
         giftsGrid.innerHTML = gifts.map(g=>{
-          const price = g.price ? `<p><strong>${formatBRL(g.price)}</strong></p>` : '';
           const desc  = g.description ? `<p class="muted">${g.description}</p>` : '';
           const img   = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
-          const shop  = g.buy_link ? `<p><a href="${g.buy_link}" target="_blank" rel="noopener">Ver detalhe/loja</a></p>` : '';
           return `
             <article class="card" aria-label="${g.title}">
               ${img}
               <h3 style="margin:.6rem 0 .2rem">${g.title}</h3>
               ${desc}
-              ${price}
               <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
               <div class="row" role="group" aria-label="Reservar ${g.title}">
                 <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}" aria-label="Quantidade para reservar">
                 <button type="button" class="btn btn-outline" onclick="reserve('${g.id}', this)">Reservar</button>
               </div>
-              ${shop}
             </article>
           `;
         }).join('');
