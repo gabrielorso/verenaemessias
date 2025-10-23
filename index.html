@@ -34,7 +34,7 @@
       transform:translateZ(0); /* evita flicker em alguns browsers */
     }
     @media (prefers-color-scheme: dark){
-      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; ---weak:#2a0d1f; }
+      :root{ --bg:#111416; --card:#161a1d; --text:#f3f5f7; --muted:#9aa3ad; --border:#23282d; --brand-weak:#2a0d1f; }
       body::before{
         background:
           linear-gradient(var(--overlay-dark),var(--overlay-dark)),
@@ -49,7 +49,31 @@
       padding:4rem 1rem 2rem; text-align:center; position:relative;
       background:rgba(255,255,255,.45); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
+      /* >>> alterações para fixar e permitir compactar ao rolar <<< */
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      transition: padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+      box-shadow: 0 8px 24px rgba(17,24,39,.08);
     }
+    /* estado compacto ao rolar */
+    header.compact{
+      padding:.6rem 1rem;
+      background:rgba(255,255,255,.70);
+      -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
+      border-bottom-color:rgba(0,0,0,.06);
+    }
+    header.compact .hero-title{
+      font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
+      font-size:clamp(1.2rem,.9rem + 1vw,1.6rem);
+      margin:0;
+    }
+    header.compact .hero-sub{ display:none; }
+    header.compact .nav{ margin-top:.25rem; }
+
+    @media (prefers-color-scheme: dark){
+      header{ background:rgba(22,26,29,.55); border-color:var(--border); }
+      header.compact{ background:rgba(22,26,29,.78); border-bottom-color:rgba(255,255,255,.06); }
+    }
+
     .hero-title{
       font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
       font-size:clamp(1.8rem,1.2rem + 2vw,3rem); margin:0 0 .5rem;
@@ -60,6 +84,9 @@
     .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
     .nav a:hover{ background:#f5f5f5; text-decoration:none }
     .nav a.primary{ background:var(--brand); color:#fff } .nav a.primary:hover{ background:#C20068 }
+
+    /* espaçador pra compensar o header fixo (altura ajustada via JS) */
+    #header-spacer{ height: var(--h-expanded, 160px); }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
     section{ margin:2rem 0 }
@@ -99,7 +126,6 @@
 
     /* Dark tune */
     @media(prefers-color-scheme: dark){
-      header{ background:rgba(22,26,29,.55); border-color:var(--border); }
       .nav{ background:var(--card) }
       .btn{ background:#1a1f23; border-color:#2a3036 }
       .btn:hover{ background:#20262b }
@@ -116,6 +142,9 @@
       <a href="#gifts">Lista de Presentes</a>
     </nav>
   </header>
+
+  <!-- espaçador para compensar o header fixo; altura ajustada via JS -->
+  <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
     <section id="rsvp" aria-labelledby="rsvp-title">
@@ -182,6 +211,45 @@
   </footer>
 
   <script>
+    // --- Header compacto ao rolar ---
+    (function(){
+      const header = document.querySelector('header');
+      const spacer = document.getElementById('header-spacer');
+
+      function measureHeights(){
+        header.classList.remove('compact');
+        const expanded = header.getBoundingClientRect().height;
+
+        header.classList.add('compact');
+        const compact = header.getBoundingClientRect().height;
+
+        header.classList.remove('compact');
+
+        document.documentElement.style.setProperty('--h-expanded', expanded + 'px');
+        document.documentElement.style.setProperty('--h-compact', compact + 'px');
+        if (spacer) spacer.style.height = 'var(--h-expanded)';
+      }
+
+      function onScroll(){
+        const threshold = 60; // ajuste se quiser recolher antes/depois
+        if (window.scrollY > threshold){
+          header.classList.add('compact');
+          if (spacer) spacer.style.height = 'var(--h-compact)';
+        } else {
+          header.classList.remove('compact');
+          if (spacer) spacer.style.height = 'var(--h-expanded)';
+        }
+      }
+
+      window.addEventListener('load', measureHeights, { once:true });
+      window.addEventListener('resize', measureHeights);
+      window.addEventListener('scroll', onScroll, { passive:true });
+
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        header.style.transition = 'none';
+      }
+    })();
+
     // 🔗 URL do Apps Script (produção) que TERMINA EM /exec
     const API = 'https://script.google.com/macros/s/AKfycbzpgKG6r1Uo9pq3CwNuoAYSQLtVVDUSHGDkLrVha6EMaXP_cBxSpADdzhSJqK_m0zR_Qg/exec';
 
