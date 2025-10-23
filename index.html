@@ -12,18 +12,17 @@
 
   <style>
     :root{
-      --bg: #faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
+      --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
       --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
-      /* 👉 troque a URL abaixo pela sua imagem */
-      --bg-photo: url("img/foto-fundo.JPG");
-      --overlay-light: rgba(250,247,245,.78);
-      --overlay-dark: rgba(17,20,22,.70);
+      --bg-photo:url("img/foto-fundo.JPG");
+      --overlay-light:rgba(250,247,245,.78);
+      --overlay-dark:rgba(17,20,22,.70);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;color:var(--text);background:var(--bg);
-      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.45;
+      margin:0; color:var(--text); background:var(--bg);
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
     /* Fundo com foto + sobreposição para legibilidade */
     body::before{
@@ -42,16 +41,17 @@
       }
     }
 
-    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
 
-    /* Cabeçalho translúcido com leve blur + comportamento fixo/compacto */
+    /* Cabeçalho translúcido fixo + compacto ao rolar */
     header{
       padding:4rem 1rem 2rem; text-align:center; position:relative;
       background:rgba(255,255,255,.45); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      transition: padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
-      box-shadow: 0 8px 24px rgba(17,24,39,.08);
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      transition:padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+      box-shadow:0 8px 24px rgba(17,24,39,.08);
     }
     header.compact{
       padding:.6rem 1rem;
@@ -77,17 +77,21 @@
       font-size:clamp(1.8rem,1.2rem + 2vw,3rem); margin:0 0 .5rem;
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
-    .nav{ display:inline-flex; gap:.5rem; margin-top:1rem; background:#fff; border:1px solid var(--border);
-      border-radius:999px; padding:.35rem; box-shadow:var(--shadow); }
-    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
-    .nav a:hover{ background:#f5f5f5; text-decoration:none }
-    .nav a.primary{ background:var(--brand); color:#fff } .nav a.primary:hover{ background:#C20068 }
 
-    /* espaçador pra compensar o header fixo (altura ajustada via JS) */
-    #header-spacer{ height: var(--h-expanded, 160px); }
+    .nav{
+      display:inline-flex; gap:.5rem; margin-top:1rem; background:#fff; border:1px solid var(--border);
+      border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
+    }
+    .nav a{ padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text); }
+    .nav a:hover{ background:#f5f5f5; text-decoration:none; }
+    .nav a.primary{ background:var(--brand); color:#fff; }
+    .nav a.primary:hover{ background:#C20068; }
+
+    /* espaçador para compensar header fixo (altura ajustada via JS) */
+    #header-spacer{ height:var(--h-expanded, 160px); }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
-    section{ margin:2rem 0 }
+    section{ margin:2rem 0; scroll-margin-top:calc(var(--h-compact, 80px) + 16px); }
     h2{ font-family:"Playfair Display",serif; font-size:clamp(1.3rem,1rem + 1.2vw,2rem); margin:0 0 .75rem }
     p{ margin:.25rem 0 .9rem }
 
@@ -108,8 +112,6 @@
       font-weight:600; transition:transform .06s ease, background .15s ease, border-color .15s ease;
     }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
-    .btn-primary{ border-color:transparent; background:var(--brand); color:#fff; box-shadow:0 4px 14px rgba(46,125,50,.25) }
-    .btn-primary:hover{ background:#C20068 }
     .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
     .btn-outline:hover{ background:var(--brand-weak) }
 
@@ -141,7 +143,7 @@
     </nav>
   </header>
 
-  <!-- espaçador para compensar o header fixo; altura ajustada via JS -->
+  <!-- espaçador do header fixo -->
   <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
@@ -185,7 +187,7 @@
 
         <div class="row" style="justify-content:space-between; gap:.6rem; margin-top:.5rem;">
           <small class="muted">Suas informações são usadas apenas para a organização do evento.</small>
-          <button id="rsvpBtn" type="submit" class="btn btn-primary">Enviar confirmação</button>
+          <button id="rsvpBtn" type="submit" class="btn btn-outline">Enviar confirmação</button>
         </div>
         <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
       </form>
@@ -209,29 +211,33 @@
   </footer>
 
   <script>
-    // --- Header compacto ao rolar + realce dinâmico do nav ---
+    // --- Cabeçalho compacto + nav ativo por rolagem ---
     (function(){
       const header = document.querySelector('header');
       const spacer = document.getElementById('header-spacer');
       const navRsvp  = document.getElementById('nav-rsvp');
       const navGifts = document.getElementById('nav-gifts');
       const sections = [
-        { id: 'rsvp',  link: navRsvp  },
-        { id: 'gifts', link: navGifts }
+        { id:'rsvp',  el: null, link: navRsvp  },
+        { id:'gifts', el: null, link: navGifts }
       ];
+      let H_EXP = 160, H_COMP = 80;
 
       function measureHeights(){
         header.classList.remove('compact');
         const expanded = header.getBoundingClientRect().height;
-
         header.classList.add('compact');
         const compact = header.getBoundingClientRect().height;
-
         header.classList.remove('compact');
 
+        H_EXP = expanded; H_COMP = compact;
         document.documentElement.style.setProperty('--h-expanded', expanded + 'px');
         document.documentElement.style.setProperty('--h-compact', compact + 'px');
         if (spacer) spacer.style.height = 'var(--h-expanded)';
+
+        // atualiza refs de seção
+        sections.forEach(s => s.el = document.getElementById(s.id));
+        updateActiveByScroll(); // define estado inicial
       }
 
       function onScroll(){
@@ -243,42 +249,41 @@
           header.classList.remove('compact');
           if (spacer) spacer.style.height = 'var(--h-expanded)';
         }
+        updateActiveByScroll();
       }
 
-      // Realça o link da seção visível
-      function setActive(linkToActivate){
+      function setActive(link){
         [navRsvp, navGifts].forEach(a => a.classList.remove('primary'));
-        if (linkToActivate) linkToActivate.classList.add('primary');
+        link?.classList.add('primary');
       }
 
-      // IntersectionObserver para alternar o botão ativo
-      const io = new IntersectionObserver((entries)=>{
-        // escolhe a seção mais visível
-        let best = null, bestRatio = 0;
-        for (const entry of entries){
-          if (entry.isIntersecting && entry.intersectionRatio > bestRatio){
-            best = entry; bestRatio = entry.intersectionRatio;
+      // Decide a seção ativa considerando a posição no viewport e a altura do header
+      function updateActiveByScroll(){
+        const y = window.scrollY;
+        const headerH = header.classList.contains('compact') ? H_COMP : H_EXP;
+        const probe = y + headerH + 8; // “linha” logo abaixo do header
+        let active = sections[0];
+
+        for (const s of sections){
+          if (!s.el) continue;
+          const top = s.el.offsetTop;
+          const bottom = top + s.el.offsetHeight;
+          if (probe >= top && probe < bottom){
+            active = s; break;
           }
+          // fallback: a última que passou do topo
+          if (probe >= top) active = s;
         }
-        if (best){
-          const sec = sections.find(s => s.id === best.target.id);
-          setActive(sec?.link);
-        }
-      }, {
-        // considera a área central da tela como "alvo" principal
-        root: null,
-        threshold: [0.25, 0.5, 0.75],
-        rootMargin: '-20% 0px -40% 0px' // favorece a área superior/central
-      });
+        setActive(active.link);
+      }
 
-      sections.forEach(s => {
-        const el = document.getElementById(s.id);
-        if (el) io.observe(el);
+      // clique nos links: rolagem suave respeitando scroll-margin-top (CSS)
+      [navRsvp, navGifts].forEach(a=>{
+        a?.addEventListener('click', (ev)=>{
+          // deixa o navegador tratar o hash, mas suaviza
+          // (se preferir 100% JS, poderíamos usar scrollIntoView)
+        });
       });
-
-      // ao clicar, já marca o botão correspondente
-      navRsvp?.addEventListener('click', ()=> setActive(navRsvp));
-      navGifts?.addEventListener('click', ()=> setActive(navGifts));
 
       window.addEventListener('load', measureHeights, { once:true });
       window.addEventListener('resize', measureHeights);
@@ -318,8 +323,8 @@
         }
 
         giftsGrid.innerHTML = gifts.map(g=>{
-          const desc  = g.description ? `<p class="muted">${g.description}</p>` : '';
-          const img   = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
+          const desc = g.description ? `<p class="muted">${g.description}</p>` : '';
+          const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
           return `
             <article class="card" aria-label="${g.title}">
               ${img}
