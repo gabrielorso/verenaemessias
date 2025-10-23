@@ -14,12 +14,14 @@
     :root{
       --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
       --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
-      --bg-photo:url("img/foto-fundo.JPG");           /* desktop */
-      --bg-photo-mobile: var(--bg-photo);              /* pode trocar por uma versão vertical */
+      /* 👉 troque a URL abaixo pela sua imagem */
+      --bg-photo:url("img/foto-fundo.JPG");
       --overlay-light:rgba(250,247,245,.78);
       --overlay-dark:rgba(17,20,22,.70);
-      --overlay: var(--overlay-light);                 /* troca p/ dark abaixo */
-      --bg-focal: 50% 45%;                             /* foco da foto (x y) */
+
+      /* apenas controle fino do enquadramento no mobile (tema igual) */
+      --bg-pos: 50% 50%;
+      --bg-pos-mobile: 50% 20%; /* ajuste aqui a “altura” do enquadramento no mobile */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -28,61 +30,56 @@
       font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
 
-    /* Fundo com foto + sobreposição (camadas separadas, fácil de ajustar por breakpoint) */
+    /* Fundo com foto + sobreposição (mesmo tema) */
     body::before{
       content:""; position:fixed; inset:0; z-index:-1;
       background-image:
-        linear-gradient(var(--overlay), var(--overlay)),
+        linear-gradient(var(--overlay-light),var(--overlay-light)),
         var(--bg-photo);
       background-position:
         50% 50%,
-        var(--bg-focal);
+        var(--bg-pos);
       background-size:
         cover,
-        cover;                 /* desktop: cobre a tela */
+        cover;                 /* mantém COVER (tema igual) */
       background-repeat:
         no-repeat,
         no-repeat;
       background-attachment:
         scroll,
-        fixed;                 /* parallax leve no desktop */
+        fixed;                 /* leve parallax no desktop */
       transform:translateZ(0);
     }
-    /* 🌙 Dark mode: só alterna a sobreposição */
     @media (prefers-color-scheme: dark){
-      :root{ --overlay: var(--overlay-dark); }
-    }
-    /* 📱 Mobile: mostra a foto inteira (contain) e desliga background fixed */
-    @media (max-width: 700px){
-      :root{
-        --bg-photo: var(--bg-photo-mobile);  /* se quiser outra imagem no mobile */
-        --bg-focal: 50% 30%;                 /* ajuste de enquadramento no mobile */
-      }
       body::before{
-        background-size:
-          cover,    /* gradiente cobre tudo */
-          contain;  /* foto aparece inteira, sem corte */
-        background-attachment:
-          scroll,
-          scroll;   /* iOS/Android mais suave */
+        background-image:
+          linear-gradient(var(--overlay-dark),var(--overlay-dark)),
+          var(--bg-photo);
+      }
+    }
+    /* Mobile: só reposiciona e desliga o attachment fixed (sem trocar para contain) */
+    @media (max-width: 700px){
+      body::before{
         background-position:
           50% 50%,
-          50% 0%;
-        background-color: var(--bg); /* cor de fundo atrás da foto se sobrar espaço */
+          var(--bg-pos-mobile);
+        background-attachment:
+          scroll,
+          scroll;
       }
     }
 
     a{color:var(--brand); text-decoration:none}
     a:hover{text-decoration:underline}
 
-    /* Cabeçalho translúcido fixo + compacto ao rolar */
+    /* Cabeçalho translúcido com leve blur + fixo/compacto */
     header{
       padding:4rem 1rem 2rem; text-align:center; position:relative;
       background:rgba(255,255,255,.45); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(6px); backdrop-filter:saturate(120%) blur(6px);
-      position:fixed; top:0; left:0; right:0; z-index:1000;
-      transition:padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
-      box-shadow:0 8px 24px rgba(17,24,39,.08);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      transition: padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+      box-shadow: 0 8px 24px rgba(17,24,39,.08);
     }
     header.compact{
       padding:.6rem 1rem;
@@ -98,48 +95,38 @@
     header.compact .hero-sub{ display:none; }
     header.compact .nav{ margin-top:.25rem; }
 
-    @media (prefers-color-scheme: dark){
-      header{ background:rgba(22,26,29,.55); border-color:var(--border); }
-      header.compact{ background:rgba(22,26,29,.78); border-bottom-color:rgba(255,255,255,.06); }
-    }
-
     .hero-title{
       font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
       font-size:clamp(1.8rem,1.2rem + 2vw,3rem); margin:0 0 .5rem;
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.05rem; }
 
-    /* NAV – chips responsivos */
+    /* NAV – pílula branca (tema original), responsiva */
     .nav{
-      /* Desktop: em linha, centralizados */
-      display:inline-grid; grid-auto-flow:column; grid-auto-columns:max-content;
-      gap:.5rem; margin-top:1rem; background:transparent; border:0; padding:0; box-shadow:none;
+      display:inline-flex; gap:.5rem; margin-top:1rem;
+      background:#fff; border:1px solid var(--border);
+      border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
+      flex-wrap:wrap; /* permite quebrar linha quando precisa */
     }
     .nav a{
-      display:flex; align-items:center; justify-content:center;
-      padding:.55rem 1rem; border-radius:999px; font-weight:600; color:var(--text);
-      background:#f2f2f2; border:1px solid var(--border);
-      white-space:nowrap;
+      padding:.5rem .9rem; border-radius:999px; font-weight:500; color:var(--text);
     }
-    .nav a:hover{ background:#eaeaea; text-decoration:none; }
-    .nav a.primary{ background:var(--brand); color:#fff; border-color:transparent; }
-    .nav a.primary:hover{ background:#C20068; }
+    .nav a:hover{ background:#f5f5f5; text-decoration:none }
+    .nav a.primary{ background:var(--brand); color:#fff }
+    .nav a.primary:hover{ background:#C20068 }
 
-    /* Mobile: 2 colunas; muito estreito: 1 por linha (100%) */
+    /* Mobile: organiza dentro da própria “pílula” */
     @media (max-width: 700px){
-      .nav{
-        display:grid; grid-template-columns:1fr 1fr; gap:.5rem;
-        width:min(520px, 100% - 2rem); margin-inline:auto;
-      }
-      .nav a{ padding:.6rem .8rem; font-weight:600; }
+      .nav{ display:grid; grid-template-columns:1fr 1fr; gap:.35rem; }
+      .nav a{ text-align:center; }
     }
     @media (max-width: 380px){
       .nav{ grid-template-columns:1fr; }
       .nav a{ width:100%; }
     }
 
-    /* espaçador para compensar header fixo (altura ajustada via JS) */
-    #header-spacer{ height:var(--h-expanded, 160px); }
+    /* espaçador pra compensar o header fixo (altura ajustada via JS) */
+    #header-spacer{ height: var(--h-expanded, 160px); }
 
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
     section{ margin:2rem 0; scroll-margin-top:calc(var(--h-compact, 80px) + 16px); }
@@ -174,15 +161,6 @@
     .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%;
       animation:shimmer 1.2s infinite; border-radius:10px }
     @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    /* Dark tune (botões) */
-    @media(prefers-color-scheme: dark){
-      .btn{ background:#1a1f23; border-color:#2a3036 }
-      .btn:hover{ background:#20262b }
-      .btn-outline{ background:transparent }
-      .nav a{ background:#1f2429; border-color:#2a3036; }
-      .nav a:hover{ background:#252b31; }
-    }
   </style>
 </head>
 <body>
@@ -195,7 +173,7 @@
     </nav>
   </header>
 
-  <!-- espaçador do header fixo -->
+  <!-- espaçador para compensar o header fixo; altura ajustada via JS -->
   <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
@@ -263,7 +241,7 @@
   </footer>
 
   <script>
-    // --- Cabeçalho compacto + nav ativo por rolagem ---
+    // --- Header compacto ao rolar + realce dinâmico do nav ---
     (function(){
       const header = document.querySelector('header');
       const spacer = document.getElementById('header-spacer');
