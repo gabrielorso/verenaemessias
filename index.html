@@ -145,7 +145,7 @@
 /* opcional: deixa o espaçador do header ligeiramente menor no mobile */
 @media (max-width: 768px){
   #header-spacer{ height: 96px; }
-}|
+}
     /* Sucesso em fúcsia */
 .ok{ color: var(--brand) !important; font-weight: 700; }
 #giftMsg, #rsvpMsg{ margin:.75rem 0; }
@@ -376,23 +376,30 @@
   const qtyInput = document.getElementById('qty_' + gift_id);
   const qty = Math.max(1, Number(qtyInput?.value || 1));
 
-  // só pede o nome (e exige que não esteja vazio)
+  // só pede o nome (obrigatório)
   const name = (prompt('Seu nome completo:') || '').trim();
   if (!name){
     giftMsg.innerHTML = '<span class="err">Informe seu nome completo.</span>';
     return;
   }
 
+  // gera um e-mail placeholder a partir do nome (RFC "invalid" é seguro)
+  const slug = name.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // tira acentos
+    .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
+    || 'convidado';
+  const placeholderEmail = `${slug}@sem-email.invalid`;
+
   try{
     if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
 
-    // e-mail agora é opcional → envio vazio só para compatibilidade
     const body = new URLSearchParams({
       action: 'reserve',
       gift_id,
       qty: String(qty),
       name,
-      email: ''            // se preferir não enviar, pode remover esta linha
+      email: placeholderEmail,   // <- satisfaz o backend
+      noemail: '1'               // <- dica opcional p/ você tratar no Apps Script
     });
 
     const res = await fetch(API, {
@@ -425,6 +432,7 @@
     if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
   }
 }
+
     window.reserve = reserve;
 
     // RSVP
