@@ -181,6 +181,26 @@
     @media (prefers-reduced-motion: reduce){
       *{ scroll-behavior:auto !important; animation:none !important; transition:none !important }
     }
+
+    /* Tap-to-copy base + toast */
+    .copyable { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    #copy-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(12px);
+      background: #E6007E; /* fúcsia */
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      font: 600 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 9999;
+    }
+    #copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
@@ -198,6 +218,14 @@
   <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
+    <!-- Exemplo manual de “toque-e-copie” (opcional) -->
+    <p class="copyable" data-copy="self" aria-label="Copiar chave PIX">
+      Chave PIX (clique para copiar): <strong>75982314323</strong>
+    </p>
+
+    <!-- Toast de feedback -->
+    <div id="copy-toast" role="status" aria-live="polite" aria-atomic="true">Copiado!</div>
+
     <section id="rsvp" aria-labelledby="rsvp-title">
       <h2 id="rsvp-title">Confirme sua Presença</h2>
       <form id="rsvpForm" class="card" novalidate>
@@ -336,6 +364,96 @@
       }catch(err){ console.error('Header init error:', err); }
     })();
 
+    // ===========================
+    // Tap-to-copy com REGEX
+    // ===========================
+
+    // Copiar texto (Clipboard API + fallback)
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    function showToast(msg = 'Copiado!') {
+      const el = document.getElementById('copy-toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(window.__copyToastTimer);
+      window.__copyToastTimer = setTimeout(() => el.classList.remove('show'), 1400);
+    }
+
+    const norm = (s)=> (s||'').toString().normalize('NFKC');
+
+    // Regex de chaves PIX (EMV, e-mail, telefone BR, CPF/CNPJ, EVP/UUID)
+    function extractPixKey(text) {
+      const t = norm(text);
+
+      // Pix Copia e Cola (EMV) — geralmente começa com 000201 e é longo
+      const emv = t.match(/\b000201[0-9A-Za-z]{20,}\b/);
+      if (emv) return emv[0];
+
+      const email = t.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+      if (email) return email[0];
+
+      const phone = t.match(/\+?55\s*\(?\d{2}\)?[\s.-]*\d{4,5}[\s.-]?\d{4}\b/);
+      if (phone) return phone[0].replace(/[^\d+]/g, '');
+
+      const cpf = t.match(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/);
+      if (cpf) return cpf[0].replace(/\D/g,'');
+      const cnpj = t.match(/\b\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}\b/);
+      if (cnpj) return cnpj[0].replace(/\D/g,'');
+
+      const evp = t.match(/\b[0-9a-f]{8}-?[0-9a-f]{4}-?[1-5][0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}\b/i);
+      if (evp) return evp[0];
+
+      return null;
+    }
+
+    // Marca descrições copiáveis (usa classe gift-desc)
+    function enableTapToCopyOnDescriptions(root = document) {
+      root.querySelectorAll('.gift-desc').forEach(el => {
+        const key = extractPixKey(el.textContent || '');
+        if (!key) return;
+        el.classList.add('copyable');
+        el.setAttribute('data-copy', key);
+        el.setAttribute('aria-label', 'Copiar chave PIX');
+        el.title = 'Toque para copiar a chave PIX';
+      });
+    }
+
+    // Listener global
+    document.addEventListener('click', async (e) => {
+      const target = e.target.closest('[data-copy]');
+      if (!target) return;
+
+      const raw = target.dataset.copy === 'self'
+        ? (target.textContent || '')
+        : target.dataset.copy;
+
+      const text = norm(raw).replace(/^(chave\s*pix|pix|chave)\s*:\s*/i, '').trim();
+
+      try {
+        const ok = await copyText(text);
+        if (navigator.vibrate) navigator.vibrate(10);
+        showToast(ok ? 'Chave copiada!' : 'Não foi possível copiar');
+      } catch {
+        showToast('Não foi possível copiar');
+      }
+    }, { passive: true });
+
     // ----- Config API -----
     const API = 'https://script.google.com/macros/s/AKfycbzpgKG6r1Uo9pq3CwNuoAYSQLtVVDUSHGDkLrVha6EMaXP_cBxSpADdzhSJqK_m0zR_Qg/exec';
 
@@ -374,7 +492,8 @@
         }
 
         giftsGrid.innerHTML = gifts.map(g=>{
-          const desc = g.description ? `<p class="muted">${g.description}</p>` : '';
+          // ADIÇÃO: classe gift-desc para ativar o regex + copiar
+          const desc = g.description ? `<p class="muted gift-desc">${g.description}</p>` : '';
           const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
           return `
             <article class="card" aria-label="${g.title}">
@@ -389,6 +508,10 @@
             </article>
           `;
         }).join('');
+
+        // Ativa “toque-e-copie” nas descrições recém inseridas
+        enableTapToCopyOnDescriptions(giftsGrid);
+
       }catch(e){
         console.error(e);
         showGiftError('Erro de conexão ao carregar presentes.', String(e));
@@ -487,6 +610,23 @@
         }
       });
     }catch(e){ console.error('RSVP init error:', e); }
+
+    // ----- Observador de mudanças na lista (caso outros scripts insiram/editem descrições) -----
+    (function(){
+      const gifts = document.getElementById('giftsGrid');
+      if (!gifts) return;
+      const mo = new MutationObserver(muts => {
+        for (const m of muts) {
+          if (m.type === 'childList' && (m.addedNodes?.length || 0) > 0) {
+            m.addedNodes.forEach(node => {
+              if (node.nodeType === 1) enableTapToCopyOnDescriptions(node);
+            });
+          }
+          if (m.type === 'characterData') enableTapToCopyOnDescriptions(gifts);
+        }
+      });
+      mo.observe(gifts, { childList: true, subtree: true, characterData: true });
+    })();
 
     // Carrega a lista ao abrir
     loadGifts();
