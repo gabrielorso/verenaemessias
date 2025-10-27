@@ -28,6 +28,8 @@
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
     img{max-width:100%; display:block; height:auto}
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
 
     /* Fundo com foto + sobreposição */
     body::before{
@@ -43,9 +45,6 @@
     @media (max-width:700px){
       body::before{ background-position:50% 50%, var(--bg-pos-mobile); background-attachment:scroll, scroll; }
     }
-
-    a{color:var(--brand); text-decoration:none}
-    a:hover{text-decoration:underline}
 
     /* Largura máxima */
     .container{ max-width:1040px; margin-inline:auto; padding-inline:1rem; }
@@ -92,7 +91,7 @@
     section>h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
     #gifts>.muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
 
-    /* Cards e grids */
+    /* Cards e grid genérica */
     .card, form{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow) }
     .grid{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)) }
 
@@ -108,7 +107,7 @@
     /* Botões */
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
-      padding:.75rem 1rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; font-weight:600;
+      padding:.7rem .95rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; font-weight:600;
       transition:transform .06s ease, background .15s ease, border-color .15s ease
     }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
@@ -119,6 +118,7 @@
     .muted{ color:var(--muted) }
     .ok{ color:var(--brand); font-weight:700 }
     .err{ color:#b00020 }
+    #giftMsg,#rsvpMsg{ margin:.75rem 0; }
 
     /* Footer */
     .tag{ display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color:var(--muted); background:#fff }
@@ -128,32 +128,41 @@
     .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:10px }
     @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-    /* ----- Gifts: layout compacto, foto com aspect-ratio e botão visível ----- */
-    #gifts .card{ padding:12px 12px 14px; border-radius:12px; }
-    #gifts .card h3{ font-size:1rem; line-height:1.25; margin:.5rem 0 .25rem; }
-    #gifts .card p{ margin:.25rem 0; }
-    #gifts .card .muted{ color:var(--text); text-shadow:none }
-    #gifts .card img{
-      height:auto !important; aspect-ratio:16/9; object-fit:cover; border-radius:10px; background:#f4f4f4;
+    /* ----- Gifts: cards compactos + foto mais baixa + linha de ação fixa ----- */
+    #giftsGrid{ display:grid; gap:14px; } /* sobrepõe .grid quando aplicado ao id */
+    /* Em celulares medianos: 2 colunas; em bem estreitos: 1 coluna */
+    @media (min-width:400px) and (max-width:768px){
+      #giftsGrid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     }
-    #gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
-    #gifts .row input[type="number"]{ width:90px; flex:0 0 90px; margin:0; }
-    #gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }
-    .clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    @media (max-width:399px){
+      #giftsGrid{ grid-template-columns:1fr; }
+    }
 
-    /* Mobile: força largura total e ainda mais baixo */
+    #gifts .card{ padding:12px 12px 14px; border-radius:12px; }
+    #gifts .card h3{ font-size:.98rem; line-height:1.25; margin:.45rem 0 .2rem; }
+    #gifts .card p{ margin:.2rem 0; font-size:.9rem }
+    #gifts .card .muted{ color:var(--text); text-shadow:none }
+
+    /* Foto baixa: desktop/tablet = 16:10; mobile = 2:1 */
+    #gifts .card img{ height:auto !important; aspect-ratio:16/10; object-fit:cover; border-radius:10px; background:#f4f4f4 }
+    @media (max-width:768px){
+      #gifts .card img{ aspect-ratio:2/1; }
+    }
+
+    /* Linha de quantidade + botão: grade estável */
+    #gifts .row{ display:grid; grid-template-columns:74px 1fr; align-items:center; gap:8px; }
+    #gifts .row input[type="number"]{ width:74px; padding:.6rem .6rem; margin:0; }
+    #gifts .row .btn{ justify-self:end; white-space:nowrap; }
+
+    /* Força largura total e evita zoom/escala estranha no mobile */
     @media (max-width:768px){
       html,body{ width:100%; max-width:none; overflow-x:hidden }
       body > header, body > #header-spacer, body > main, body > footer,
       .container, main, section, .card, form, #giftsGrid{ width:100% !important; max-width:none !important }
-      .grid{ grid-template-columns:1fr !important }
       #header-spacer{ height:96px }
-      #gifts .row{ gap:.5rem }
-      #gifts .row input[type="number"]{ width:78px; flex-basis:78px }
-      #gifts .card img{ aspect-ratio:16/10 } /* um pouco mais baixo no mobile */
     }
 
-    /* Acessibilidade de movimento */
+    /* Acessibilidade */
     @media (prefers-reduced-motion: reduce){
       *{ scroll-behavior:auto !important; animation:none !important; transition:none !important }
     }
@@ -171,7 +180,6 @@
     </div>
   </header>
 
-  <!-- Espaçador do header fixo -->
   <div id="header-spacer" aria-hidden="true"></div>
 
   <main>
@@ -226,9 +234,9 @@
       <p class="muted">Os itens disponíveis aparecem abaixo. Quando esgotar, somem automaticamente.</p>
 
       <div id="giftsGrid" class="grid" aria-live="polite">
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:60%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:80%;margin-top:8px;"></div></div>
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:70%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:65%;margin-top:8px;"></div></div>
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:55%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:75%;margin-top:8px;"></div></div>
+        <div class="card"><div class="skeleton" style="width:100%;height:140px;"></div><div class="skeleton" style="height:14px;width:60%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:80%;margin-top:8px;"></div></div>
+        <div class="card"><div class="skeleton" style="width:100%;height:140px;"></div><div class="skeleton" style="height:14px;width:70%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:65%;margin-top:8px;"></div></div>
+        <div class="card"><div class="skeleton" style="width:100%;height:140px;"></div><div class="skeleton" style="height:14px;width:55%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:75%;margin-top:8px;"></div></div>
       </div>
       <div id="giftMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
     </section>
@@ -351,7 +359,7 @@
         }
 
         giftsGrid.innerHTML = gifts.map(g=>{
-          const desc = g.description ? `<p class="muted clamp-2">${g.description}</p>` : '';
+          const desc = g.description ? `<p class="muted">${g.description}</p>` : '';
           const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
           return `
             <article class="card" aria-label="${g.title}">
@@ -372,7 +380,7 @@
       }
     }
 
-    // ----- Reserva (e-mail opcional, com fallback automático) -----
+    // ----- Reserva -----
     async function reserve(gift_id, btnEl){
       giftMsg.textContent = '';
       const qtyInput = document.getElementById('qty_' + gift_id);
@@ -384,27 +392,18 @@
         return;
       }
 
-      // função que envia a reserva com payload arbitrário
       async function postReserve(payload){
-        const res = await fetch(API, {
-          method:'POST',
-          body:new URLSearchParams(payload),
-          cache:'no-store',
-          headers:{ 'Accept':'application/json' }
-        });
+        const res = await fetch(API, { method:'POST', body:new URLSearchParams(payload), cache:'no-store', headers:{ 'Accept':'application/json' } });
         const txt = await res.text();
-        let data = null;
-        try{ data = JSON.parse(txt); }catch(e){ return { ok:false, parseError:true, raw:txt }; }
+        let data = null; try{ data = JSON.parse(txt); }catch(e){ return { ok:false, parseError:true, raw:txt }; }
         return data;
       }
 
       try{
         if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
 
-        // 1ª tentativa: sem e-mail
         let data = await postReserve({ action:'reserve', gift_id, qty:String(qty), name });
 
-        // Se o backend ainda exigir email, tenta de novo com placeholder
         if (!data.ok && /mail/i.test(String(data.error||''))){
           const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'convidado';
           const placeholderEmail = `${slug}@sem-email.invalid`;
