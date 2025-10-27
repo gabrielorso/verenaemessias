@@ -146,6 +146,9 @@
 @media (max-width: 768px){
   #header-spacer{ height: 96px; }
 }|
+    /* Sucesso em fúcsia */
+.ok{ color: var(--brand) !important; font-weight: 700; }
+#giftMsg, #rsvpMsg{ margin:.75rem 0; }
   </style>
 </head>
 <body>
@@ -311,6 +314,11 @@
 
     const giftsGrid = document.getElementById('giftsGrid');
     const giftMsg   = document.getElementById('giftMsg');
+    // Move a mensagem para o topo da lista de presentes
+    if (giftMsg && giftsGrid && giftMsg.nextElementSibling !== giftsGrid) {
+      giftsGrid.parentNode.insertBefore(giftMsg, giftsGrid);
+    }
+
     const rsvpForm  = document.getElementById('rsvpForm');
     const rsvpMsg   = document.getElementById('rsvpMsg');
     const rsvpBtn   = document.getElementById('rsvpBtn');
@@ -385,7 +393,7 @@
         }
 
         if (data.ok){
-          giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💚</span>';
+          giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💗</span>';
           await loadGifts();
         } else {
           giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
