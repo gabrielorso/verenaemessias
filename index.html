@@ -126,4 +126,356 @@
 
     /* Skeleton */
     .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:10px }
-    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-posi
+    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* ----- Gifts: layout compacto, foto com aspect-ratio e botão visível ----- */
+    #gifts .card{ padding:12px 12px 14px; border-radius:12px; }
+    #gifts .card h3{ font-size:1rem; line-height:1.25; margin:.5rem 0 .25rem; }
+    #gifts .card p{ margin:.25rem 0; }
+    #gifts .card .muted{ color:var(--text); text-shadow:none }
+    #gifts .card img{
+      height:auto !important; aspect-ratio:16/9; object-fit:cover; border-radius:10px; background:#f4f4f4;
+    }
+    #gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
+    #gifts .row input[type="number"]{ width:90px; flex:0 0 90px; margin:0; }
+    #gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }
+    .clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    /* Mobile: força largura total e ainda mais baixo */
+    @media (max-width:768px){
+      html,body{ width:100%; max-width:none; overflow-x:hidden }
+      body > header, body > #header-spacer, body > main, body > footer,
+      .container, main, section, .card, form, #giftsGrid{ width:100% !important; max-width:none !important }
+      .grid{ grid-template-columns:1fr !important }
+      #header-spacer{ height:96px }
+      #gifts .row{ gap:.5rem }
+      #gifts .row input[type="number"]{ width:78px; flex-basis:78px }
+      #gifts .card img{ aspect-ratio:16/10 } /* um pouco mais baixo no mobile */
+    }
+
+    /* Acessibilidade de movimento */
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; animation:none !important; transition:none !important }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 class="hero-title">Verena & Messias</h1>
+      <p class="hero-sub">Confirme sua presença e escolha um presente com carinho. 🩷</p>
+      <nav class="nav" aria-label="Seções">
+        <a id="nav-rsvp" href="#rsvp" class="primary">Confirmar Presença</a>
+        <a id="nav-gifts" href="#gifts">Lista de Presentes</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Espaçador do header fixo -->
+  <div id="header-spacer" aria-hidden="true"></div>
+
+  <main>
+    <section id="rsvp" aria-labelledby="rsvp-title">
+      <h2 id="rsvp-title">Confirme sua Presença</h2>
+      <form id="rsvpForm" class="card" novalidate>
+        <div class="form-grid cols-2">
+          <label>Nome completo
+            <input name="name" autocomplete="name" required>
+          </label>
+          <label>E-mail
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+        </div>
+
+        <div class="form-grid cols-2">
+          <label>Telefone/WhatsApp
+            <input name="phone" autocomplete="tel">
+          </label>
+          <label>Vai comparecer?
+            <select name="attending" required>
+              <option value="">Selecione…</option>
+              <option>Sim</option>
+              <option>Não</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-grid cols-2">
+          <label>Adultos
+            <input type="number" name="adults" min="0" value="1" inputmode="numeric">
+          </label>
+          <label>Crianças
+            <input type="number" name="children" min="0" value="0" inputmode="numeric">
+          </label>
+        </div>
+
+        <label>Mensagem (opcional)
+          <textarea name="message" rows="3" placeholder="Alguma observação, restrição alimentar, etc."></textarea>
+        </label>
+
+        <div class="row" style="justify-content:space-between; gap:.6rem; margin-top:.5rem;">
+          <small class="muted">Suas informações são usadas apenas para a organização do evento.</small>
+          <button id="rsvpBtn" type="submit" class="btn btn-outline">Enviar confirmação</button>
+        </div>
+        <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
+      </form>
+    </section>
+
+    <section id="gifts" aria-labelledby="gifts-title">
+      <h2 id="gifts-title">Lista de Presentes</h2>
+      <p class="muted">Os itens disponíveis aparecem abaixo. Quando esgotar, somem automaticamente.</p>
+
+      <div id="giftsGrid" class="grid" aria-live="polite">
+        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:60%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:80%;margin-top:8px;"></div></div>
+        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:70%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:65%;margin-top:8px;"></div></div>
+        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:55%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:75%;margin-top:8px;"></div></div>
+      </div>
+      <div id="giftMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="tag">Casamento Verena & Messias</span>
+  </footer>
+
+  <script>
+    // ----- Header compacto + offset dinâmico -----
+    (function(){
+      try{
+        const header = document.querySelector('header');
+        const spacer = document.getElementById('header-spacer');
+        const navRsvp  = document.getElementById('nav-rsvp');
+        const navGifts = document.getElementById('nav-gifts');
+        const sections = [
+          { id:'rsvp',  el:null, link:navRsvp },
+          { id:'gifts', el:null, link:navGifts }
+        ];
+        let H_EXP = 120, H_COMP = 64;
+
+        function cssVar(name, value){ document.documentElement.style.setProperty(name, value); }
+
+        function measureHeights(){
+          header.classList.remove('compact');
+          const expanded = header.getBoundingClientRect().height || 120;
+          header.classList.add('compact');
+          const compact = header.getBoundingClientRect().height || 64;
+          header.classList.remove('compact');
+
+          H_EXP = Math.round(expanded);
+          H_COMP = Math.round(compact);
+
+          cssVar('--h-expanded', H_EXP + 'px');
+          cssVar('--h-compact',  H_COMP + 'px');
+          cssVar('--anchor-offset', (Math.max(H_EXP, H_COMP) + 16) + 'px');
+          spacer.style.height = H_EXP + 'px';
+
+          sections.forEach(s => s.el = document.getElementById(s.id));
+          updateActiveByScroll();
+        }
+
+        function onScroll(){
+          const threshold = 40;
+          if (window.scrollY > threshold){
+            header.classList.add('compact');
+            spacer.style.height = H_COMP + 'px';
+            cssVar('--anchor-offset', (H_COMP + 16) + 'px');
+          }else{
+            header.classList.remove('compact');
+            spacer.style.height = H_EXP + 'px';
+            cssVar('--anchor-offset', (H_EXP + 16) + 'px');
+          }
+          updateActiveByScroll();
+        }
+
+        function setActive(link){
+          [navRsvp, navGifts].forEach(a => a?.classList.remove('primary'));
+          link?.classList.add('primary');
+        }
+
+        function updateActiveByScroll(){
+          const headerH = header.classList.contains('compact') ? H_COMP : H_EXP;
+          const probe = window.scrollY + headerH + 8;
+          let active = sections[0];
+          for (const s of sections){
+            if (!s.el) continue;
+            const top = s.el.offsetTop, bottom = top + s.el.offsetHeight;
+            if (probe >= top && probe < bottom){ active = s; break; }
+            if (probe >= top) active = s;
+          }
+          setActive(active.link);
+        }
+
+        window.addEventListener('DOMContentLoaded', measureHeights, { once:true });
+        document.fonts?.ready.then(measureHeights).catch(()=>{});
+        window.addEventListener('resize', measureHeights);
+        new ResizeObserver(measureHeights).observe(header);
+        window.addEventListener('scroll', onScroll, { passive:true });
+      }catch(err){ console.error('Header init error:', err); }
+    })();
+
+    // ----- Config API -----
+    const API = 'https://script.google.com/macros/s/AKfycbzpgKG6r1Uo9pq3CwNuoAYSQLtVVDUSHGDkLrVha6EMaXP_cBxSpADdzhSJqK_m0zR_Qg/exec';
+
+    // ----- Elementos principais -----
+    const giftsGrid = document.getElementById('giftsGrid');
+    const giftMsg   = document.getElementById('giftMsg');
+    const rsvpForm  = document.getElementById('rsvpForm');
+    const rsvpMsg   = document.getElementById('rsvpMsg');
+    const rsvpBtn   = document.getElementById('rsvpBtn');
+
+    // Coloca a mensagem acima da grade de presentes
+    if (giftMsg && giftsGrid && giftMsg.nextElementSibling !== giftsGrid) {
+      giftsGrid.parentNode.insertBefore(giftMsg, giftsGrid);
+    }
+
+    function showGiftError(msg, detail){
+      giftsGrid.innerHTML = `<div class="card err">${msg}</div>`;
+      if (detail) console.warn(detail.slice(0,1000));
+    }
+
+    // ----- Carrega presentes -----
+    async function loadGifts(){
+      try{
+        const res = await fetch(API + '?action=gifts&ts=' + Date.now(), { method:'GET', cache:'no-store', headers:{ 'Accept':'application/json' } });
+        const txt = await res.text();
+        let data = null;
+        try{ data = JSON.parse(txt); }catch(e){
+          showGiftError('Erro ao interpretar a lista de presentes. (Resposta não é JSON esperada.)', txt);
+          return;
+        }
+
+        const gifts = Array.isArray(data?.gifts) ? data.gifts : [];
+        if (!gifts.length){
+          giftsGrid.innerHTML = '<div class="card"><strong>Todos os presentes já foram escolhidos 🎉</strong><p class="muted">Muito obrigado pelo carinho!</p></div>';
+          return;
+        }
+
+        giftsGrid.innerHTML = gifts.map(g=>{
+          const desc = g.description ? `<p class="muted clamp-2">${g.description}</p>` : '';
+          const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
+          return `
+            <article class="card" aria-label="${g.title}">
+              ${img}
+              <h3 style="margin:.6rem 0 .2rem">${g.title}</h3>
+              ${desc}
+              <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
+              <div class="row" role="group" aria-label="Reservar ${g.title}">
+                <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}" aria-label="Quantidade para reservar">
+                <button type="button" class="btn btn-outline" onclick="reserve('${g.id}', this)">Reservar</button>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }catch(e){
+        console.error(e);
+        showGiftError('Erro de conexão ao carregar presentes.', String(e));
+      }
+    }
+
+    // ----- Reserva (e-mail opcional, com fallback automático) -----
+    async function reserve(gift_id, btnEl){
+      giftMsg.textContent = '';
+      const qtyInput = document.getElementById('qty_' + gift_id);
+      const qty = Math.max(1, Number(qtyInput?.value || 1));
+
+      const name = (prompt('Seu nome completo:') || '').trim();
+      if (!name){
+        giftMsg.innerHTML = '<span class="err">Informe seu nome completo.</span>';
+        return;
+      }
+
+      // função que envia a reserva com payload arbitrário
+      async function postReserve(payload){
+        const res = await fetch(API, {
+          method:'POST',
+          body:new URLSearchParams(payload),
+          cache:'no-store',
+          headers:{ 'Accept':'application/json' }
+        });
+        const txt = await res.text();
+        let data = null;
+        try{ data = JSON.parse(txt); }catch(e){ return { ok:false, parseError:true, raw:txt }; }
+        return data;
+      }
+
+      try{
+        if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
+
+        // 1ª tentativa: sem e-mail
+        let data = await postReserve({ action:'reserve', gift_id, qty:String(qty), name });
+
+        // Se o backend ainda exigir email, tenta de novo com placeholder
+        if (!data.ok && /mail/i.test(String(data.error||''))){
+          const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'convidado';
+          const placeholderEmail = `${slug}@sem-email.invalid`;
+          data = await postReserve({ action:'reserve', gift_id, qty:String(qty), name, email:placeholderEmail, noemail:'1' });
+        }
+
+        if (data.ok){
+          giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💗</span>';
+          await loadGifts();
+        } else {
+          giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
+          await loadGifts();
+        }
+      }catch(e){
+        console.error(e);
+        giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
+      }finally{
+        if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
+      }
+    }
+    window.reserve = reserve;
+
+    // ----- RSVP -----
+    try{
+      rsvpForm.addEventListener('submit', async (ev)=>{
+        ev.preventDefault();
+        rsvpMsg.textContent = '';
+        rsvpBtn.disabled = true; rsvpBtn.textContent = 'Enviando…';
+
+        const required = ['name','email','attending'];
+        for (const n of required){
+          const el = rsvpForm.elements[n];
+          if (!el || !el.value){
+            rsvpMsg.innerHTML = '<span class="err">Preencha os campos obrigatórios.</span>';
+            el?.focus();
+            rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
+            return;
+          }
+        }
+
+        try{
+          const fd = new FormData(rsvpForm); fd.append('action','rsvp');
+          const res = await fetch(API, { method:'POST', body:new URLSearchParams(fd), cache:'no-store', headers:{ 'Accept':'application/json' } });
+          const txt  = await res.text();
+
+          let data = null;
+          try{ data = JSON.parse(txt); }catch(e){
+            rsvpMsg.innerHTML = '<span class="err">Erro ao interpretar a resposta do RSVP.</span>';
+            console.warn('RSVP raw:', txt.slice(0,1000));
+            rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
+            return;
+          }
+
+          if (data.ok){
+            rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
+            rsvpForm.reset();
+            document.querySelector('.nav a[href="#gifts"]')?.scrollIntoView({ behavior:'smooth', block:'center' });
+          } else {
+            rsvpMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível enviar o RSVP.') + '</span>';
+          }
+        }catch(e){
+          console.error(e);
+          rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
+        }finally{
+          rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
+        }
+      });
+    }catch(e){ console.error('RSVP init error:', e); }
+
+    // Carrega a lista ao abrir
+    loadGifts();
+  </script>
+</body>
+</html>
