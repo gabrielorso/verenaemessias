@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Casamento Verena & Messias — Confirmação & Presentes</title>
   <meta name="description" content="Confirmação de presença e lista de presentes do casamento." />
   <!-- Tipografia -->
@@ -118,6 +118,34 @@
 
     .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:10px }
     @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    /* === MOBILE FIX PATCH (100% de largura) === */
+@media (max-width: 768px){
+  html, body { width:100%; max-width:none; overflow-x:hidden; }
+  /* força os wrappers diretos a ocuparem a viewport inteira */
+  body > header,
+  body > #header-spacer,
+  body > main,
+  body > footer { width:100% !important; max-width:none !important; }
+
+  /* neutraliza containers estreitos herdados */
+  .container,
+  main,
+  section,
+  .card,
+  form,
+  #giftsGrid { width:100% !important; max-width:none !important; }
+
+  /* grade sempre 1 coluna no mobile */
+  .grid { grid-template-columns: 1fr !important; }
+
+  /* só pra garantir que nada esteja “escalado” */
+  html, body, main, section { transform:none !important; }
+}
+
+/* opcional: deixa o espaçador do header ligeiramente menor no mobile */
+@media (max-width: 768px){
+  #header-spacer{ height: 96px; }
+}|
   </style>
 </head>
 <body>
