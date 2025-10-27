@@ -5,29 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Casamento Verena & Messias — Confirmação & Presentes</title>
   <meta name="description" content="Confirmação de presença e lista de presentes do casamento." />
+
   <!-- Tipografia -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a; --brand:#E6007E;
-      --brand-weak:#FCE1F1; --border:#e7e3de; --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
+      --bg:#faf7f5; --card:#fff; --text:#1f2937; --muted:#5f6b7a;
+      --brand:#E6007E; --brand-weak:#FCE1F1; --border:#e7e3de;
+      --radius:14px; --shadow:0 6px 20px rgba(17,24,39,.06);
       --bg-photo:url("img/foto-fundo.JPG");
       --overlay-light:rgba(250,247,245,.78); --overlay-dark:rgba(17,20,22,.70);
-      --bg-pos:50% 50%; --bg-pos-mobile:50% 20%;
-      --header-tint:rgba(255,255,255,.96);
+      --bg-pos:50% 50%; --bg-pos-mobile:50% 20%; --header-tint:rgba(255,255,255,.96);
     }
-    *{box-sizing:border-box}
+    /* Reset essencial */
+    *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; color:var(--text); background:var(--bg);
-      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; line-height:1.45;
     }
-
-    /* utilitário de largura (usado no header) */
-    .container{ max-width:1040px; margin-inline:auto; padding-inline:1rem; }
+    img{max-width:100%; display:block; height:auto}
 
     /* Fundo com foto + sobreposição */
     body::before{
@@ -44,30 +44,31 @@
       body::before{ background-position:50% 50%, var(--bg-pos-mobile); background-attachment:scroll, scroll; }
     }
 
-    a{color:var(--brand); text-decoration:none} a:hover{text-decoration:underline}
+    a{color:var(--brand); text-decoration:none}
+    a:hover{text-decoration:underline}
 
-    /* Cabeçalho claro, fixo e mais baixo */
+    /* Largura máxima */
+    .container{ max-width:1040px; margin-inline:auto; padding-inline:1rem; }
+
+    /* Cabeçalho fixo */
     header{
       padding:2.25rem 0 1rem;
       text-align:center; position:fixed; inset:0 0 auto 0; z-index:1000;
       background:var(--header-tint); border-bottom:1px solid var(--border);
       -webkit-backdrop-filter:saturate(120%) blur(8px); backdrop-filter:saturate(120%) blur(8px);
-      transition:padding .22s ease, box-shadow .22s ease;
+      transition:padding .22s ease;
       box-shadow:0 8px 24px rgba(17,24,39,.08);
     }
-    header.compact{ padding:.55rem 0; background:var(--header-tint); }
-
+    header.compact{ padding:.55rem 0; }
     .hero-title{
       font-family:"Playfair Display",serif; font-weight:700; letter-spacing:.5px;
-      font-size:clamp(1.7rem,1.1rem + 1.8vw,2.6rem);
-      margin:0 0 .45rem;
+      font-size:clamp(1.7rem,1.1rem + 1.8vw,2.6rem); margin:0 0 .45rem;
     }
     .hero-sub{ color:var(--muted); margin:0 auto; max-width:720px; font-size:1.02rem; }
     header.compact .hero-title{ font-size:clamp(1.2rem,.9rem + 1vw,1.6rem); margin:0; }
     header.compact .hero-sub{ display:none; }
-    header.compact .nav{ margin-top:.25rem; }
 
-    /* NAV – pílula branca */
+    /* Nav pílula */
     .nav{
       display:inline-flex; gap:.5rem; margin-top:.9rem;
       background:#fff; border:1px solid var(--border); border-radius:999px; padding:.35rem; box-shadow:var(--shadow);
@@ -80,452 +81,49 @@
     @media (max-width:700px){ .nav{ display:grid; grid-template-columns:1fr 1fr; gap:.35rem } .nav a{text-align:center} }
     @media (max-width:380px){ .nav{ grid-template-columns:1fr } .nav a{ width:100% } }
 
-    /* Títulos claros */
-    section>h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
-    /* Só o parágrafo acima da grade de presentes fica claro */
-    #gifts>.muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
-    /* Dentro dos cards: descrição e "Disponíveis:" = mesma cor do título (não branco) */
-    #gifts .card .muted{ color:var(--text); text-shadow:none }
-
-    /* Espaçador do header (altura dinâmica via JS, com fallback) */
+    /* Espaçador do header */
     #header-spacer{ height:120px }
 
+    /* Estrutura principal */
     main{ padding:0 1rem 3rem; max-width:1040px; margin-inline:auto }
     section{ margin:2rem 0; scroll-margin-top:var(--anchor-offset, 96px) }
-
     h2{ font-family:"Playfair Display",serif; font-size:clamp(1.3rem,1rem + 1.2vw,2rem); margin:0 0 .75rem }
     p{ margin:.25rem 0 .9rem }
+    section>h2{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
+    #gifts>.muted{ color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35) }
 
+    /* Cards e grids */
     .card, form{ background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; box-shadow:var(--shadow) }
-    .grid{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)) }
-    .card img{ width:100%; height:180px; object-fit:cover; border-radius:10px; background:#f4f4f4 }
-    .row{ display:flex; gap:.9rem; align-items:center }
-    label{ display:block; font-size:.95rem; margin:.35rem 0; font-weight:500 }
-    input,select,textarea{ width:100%; padding:.7rem .8rem; border:1px solid #d6d3cf; border-radius:10px; background:#fff; font:inherit }
-    input:focus,select:focus,textarea:focus{ outline:2px solid #cfe8ff; border-color:#a7d3ff }
-    .form-grid{ display:grid; gap:.9rem } @media(min-width:700px){ .form-grid.cols-2{ grid-template-columns:1fr 1fr } }
+    .grid{ display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)) }
 
-    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    /* Form */
+    label{ display:block; font-size:.95rem; margin:.35rem 0; font-weight:500 }
+    input,select,textarea{
+      width:100%; padding:.7rem .8rem; border:1px solid #d6d3cf; border-radius:10px; background:#fff; font:inherit
+    }
+    input:focus,select:focus,textarea:focus{ outline:2px solid #cfe8ff; border-color:#a7d3ff }
+    .form-grid{ display:grid; gap:.9rem }
+    @media(min-width:700px){ .form-grid.cols-2{ grid-template-columns:1fr 1fr } }
+
+    /* Botões */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
       padding:.75rem 1rem; border-radius:999px; border:1px solid #d0d0d0; background:#fff; cursor:pointer; font-weight:600;
-      transition:transform .06s ease, background .15s ease, border-color .15s ease }
+      transition:transform .06s ease, background .15s ease, border-color .15s ease
+    }
     .btn:hover{ background:#f7f7f7 } .btn:active{ transform:translateY(1px) } .btn[disabled]{ opacity:.6; cursor:not-allowed }
     .btn-outline{ border-color:var(--brand); color:var(--brand); background:#fff }
     .btn-outline:hover{ background:#FCE1F1 }
 
-    .muted{ color:var(--muted) } .ok{ color:#0e7a4e } .err{ color:#b00020 }
+    /* Mensagens */
+    .muted{ color:var(--muted) }
+    .ok{ color:var(--brand); font-weight:700 }
+    .err{ color:#b00020 }
+
+    /* Footer */
     .tag{ display:inline-block; padding:.25rem .7rem; border:1px solid var(--border); border-radius:999px; font-size:.85rem; color:var(--muted); background:#fff }
     footer{ padding:2rem 1rem; text-align:center; color:var(--muted); font-size:.95rem }
 
+    /* Skeleton */
     .skeleton{ background:linear-gradient(90deg,#eee,#f7f7f7,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; border-radius:10px }
-    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    /* === MOBILE FIX PATCH (100% de largura) === */
-@media (max-width: 768px){
-  html, body { width:100%; max-width:none; overflow-x:hidden; }
-  /* força os wrappers diretos a ocuparem a viewport inteira */
-  body > header,
-  body > #header-spacer,
-  body > main,
-  body > footer { width:100% !important; max-width:none !important; }
-
-  /* neutraliza containers estreitos herdados */
-  .container,
-  main,
-  section,
-  .card,
-  form,
-  #giftsGrid { width:100% !important; max-width:none !important; }
-
-  /* grade sempre 1 coluna no mobile */
-  .grid { grid-template-columns: 1fr !important; }
-
-  /* só pra garantir que nada esteja “escalado” */
-  html, body, main, section { transform:none !important; }
-}
-
-/* opcional: deixa o espaçador do header ligeiramente menor no mobile */
-@media (max-width: 768px){
-  #header-spacer{ height: 96px; }
-}
-    /* Sucesso em fúcsia */
-.ok{ color: var(--brand) !important; font-weight: 700; }
-#giftMsg, #rsvpMsg{ margin:.75rem 0; }
-    /* === Cards de presentes compactos e com botão visível === */
-#gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
-#gifts .row input[type="number"]{
-  width:90px;              /* para de ocupar 100% */
-  flex:0 0 90px;           /* largura fixa e não cresce */
-  margin:0;
-}
-#gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }  /* botão sempre aparece */
-
-@media (max-width: 768px){
-  #gifts .card{ padding:12px; border-radius:12px; }
-  #gifts .card h3{ font-size:1rem; margin:.5rem 0 .25rem; }
-  #gifts .card p{ margin:.25rem 0; }
-  #gifts .card img{ height:140px; }   /* reduz a imagem pra encurtar o card */
-  #gifts .row{ gap:.5rem; }
-  #gifts .row input[type="number"]{ width:78px; flex-basis:78px; }
-}
-/* === Gifts compactos + botão sempre visível === */
-#gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
-#gifts .row input[type="number"]{
-  width:90px; flex:0 0 90px; margin:0;
-}
-#gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }
-
-/* Fotos com aspect-ratio e cards mais baixos */
-#gifts .card img{
-  height:auto !important;         /* sobrescreve height:180px */
-  aspect-ratio: 16 / 9;           /* largura total do card → altura calculada */
-  object-fit: cover; border-radius:10px;
-}
-
-/* Enxuga tipografia/espacamentos do card */
-#gifts .card{ padding:12px 12px 14px; border-radius:12px; }
-#gifts .card h3{ font-size:1rem; line-height:1.25; margin:.5rem 0 .25rem; }
-#gifts .card p{ margin:.25rem 0; }
-
-/* Mobile: ainda mais compacto */
-@media (max-width: 768px){
-  #gifts .row{ gap:.5rem; }
-  #gifts .row input[type="number"]{ width:78px; flex-basis:78px; }
-  #gifts .card img{ aspect-ratio: 16 / 10; } /* um tiquinho mais baixo no celular */
-}
-  </style>
-</head>
-<body>
-  <header>
-    <div class="container">
-      <h1 class="hero-title">Verena & Messias</h1>
-      <p class="hero-sub">Confirme sua presença e escolha um presente com carinho. 🩷</p>
-      <nav class="nav" aria-label="Seções">
-        <a id="nav-rsvp" href="#rsvp" class="primary">Confirmar Presença</a>
-        <a id="nav-gifts" href="#gifts">Lista de Presentes</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Espaçador do header fixo -->
-  <div id="header-spacer" aria-hidden="true"></div>
-
-  <main>
-    <section id="rsvp" aria-labelledby="rsvp-title">
-      <h2 id="rsvp-title">Confirme sua Presença</h2>
-      <form id="rsvpForm" class="card" novalidate>
-        <div class="form-grid cols-2">
-          <label>Nome completo
-            <input name="name" autocomplete="name" required>
-          </label>
-          <label>E-mail
-            <input type="email" name="email" autocomplete="email" required>
-          </label>
-        </div>
-
-        <div class="form-grid cols-2">
-          <label>Telefone/WhatsApp
-            <input name="phone" autocomplete="tel">
-          </label>
-          <label>Vai comparecer?
-            <select name="attending" required>
-              <option value="">Selecione…</option>
-              <option>Sim</option>
-              <option>Não</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="form-grid cols-2">
-          <label>Adultos
-            <input type="number" name="adults" min="0" value="1" inputmode="numeric">
-          </label>
-          <label>Crianças
-            <input type="number" name="children" min="0" value="0" inputmode="numeric">
-          </label>
-        </div>
-
-        <label>Mensagem (opcional)
-          <textarea name="message" rows="3" placeholder="Alguma observação, restrição alimentar, etc."></textarea>
-        </label>
-
-        <div class="row" style="justify-content:space-between; gap:.6rem; margin-top:.5rem;">
-          <small class="muted">Suas informações são usadas apenas para a organização do evento.</small>
-          <button id="rsvpBtn" type="submit" class="btn btn-outline">Enviar confirmação</button>
-        </div>
-        <div id="rsvpMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
-      </form>
-    </section>
-
-    <section id="gifts" aria-labelledby="gifts-title">
-      <h2 id="gifts-title">Lista de Presentes</h2>
-      <p class="muted">Os itens disponíveis aparecem abaixo. Quando esgotar, somem automaticamente.</p>
-
-      <div id="giftsGrid" class="grid" aria-live="polite">
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:60%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:80%;margin-top:8px;"></div></div>
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:70%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:65%;margin-top:8px;"></div></div>
-        <div class="card"><div class="skeleton" style="width:100%;height:180px;"></div><div class="skeleton" style="height:14px;width:55%;margin-top:10px;"></div><div class="skeleton" style="height:14px;width:75%;margin-top:8px;"></div></div>
-      </div>
-      <div id="giftMsg" role="status" aria-live="polite" style="margin-top:.6rem"></div>
-    </section>
-  </main>
-
-  <footer>
-    <span class="tag">Casamento Verena & Messias</span>
-  </footer>
-
-  <script>
-    // --- Header compacto + offset dinâmico ---
-    (function(){
-      try{
-        const header = document.querySelector('header');
-        const spacer = document.getElementById('header-spacer');
-        const navRsvp  = document.getElementById('nav-rsvp');
-        const navGifts = document.getElementById('nav-gifts');
-        const sections = [
-          { id:'rsvp',  el:null, link:navRsvp },
-          { id:'gifts', el:null, link:navGifts }
-        ];
-        let H_EXP = 120, H_COMP = 64;
-
-        function cssVar(name, value){ document.documentElement.style.setProperty(name, value); }
-
-        function measureHeights(){
-          if (!header) return;
-          header.classList.remove('compact');
-          const expanded = header.getBoundingClientRect().height || 120;
-          header.classList.add('compact');
-          const compact = header.getBoundingClientRect().height || 64;
-          header.classList.remove('compact');
-
-          H_EXP = Math.round(expanded);
-          H_COMP = Math.round(compact);
-
-          cssVar('--h-expanded', H_EXP + 'px');
-          cssVar('--h-compact',  H_COMP + 'px');
-          cssVar('--anchor-offset', (Math.max(H_EXP, H_COMP) + 16) + 'px');
-          if (spacer) spacer.style.height = H_EXP + 'px';
-
-          sections.forEach(s => s.el = document.getElementById(s.id));
-          updateActiveByScroll();
-        }
-
-        function onScroll(){
-          const threshold = 40;
-          if (window.scrollY > threshold){
-            header.classList.add('compact');
-            if (spacer) spacer.style.height = H_COMP + 'px';
-            cssVar('--anchor-offset', (H_COMP + 16) + 'px');
-          }else{
-            header.classList.remove('compact');
-            if (spacer) spacer.style.height = H_EXP + 'px';
-            cssVar('--anchor-offset', (H_EXP + 16) + 'px');
-          }
-          updateActiveByScroll();
-        }
-
-        function setActive(link){
-          [navRsvp, navGifts].forEach(a => a?.classList.remove('primary'));
-          link?.classList.add('primary');
-        }
-
-        function updateActiveByScroll(){
-          const headerH = header.classList.contains('compact') ? H_COMP : H_EXP;
-          const probe = window.scrollY + headerH + 8;
-          let active = sections[0];
-          for (const s of sections){
-            if (!s.el) continue;
-            const top = s.el.offsetTop, bottom = top + s.el.offsetHeight;
-            if (probe >= top && probe < bottom){ active = s; break; }
-            if (probe >= top) active = s;
-          }
-          setActive(active.link);
-        }
-
-        window.addEventListener('DOMContentLoaded', measureHeights, { once:true });
-        if (document.fonts && document.fonts.ready){ document.fonts.ready.then(measureHeights).catch(()=>{}); }
-        window.addEventListener('resize', measureHeights);
-        if (window.ResizeObserver){
-          const ro = new ResizeObserver(()=>measureHeights());
-          ro.observe(header);
-        }
-        window.addEventListener('scroll', onScroll, { passive:true });
-      }catch(err){ console.error('Header init error:', err); }
-    })();
-
-    // 🔗 URL do Apps Script (produção) que TERMINA EM /exec
-    const API = 'https://script.google.com/macros/s/AKfycbzpgKG6r1Uo9pq3CwNuoAYSQLtVVDUSHGDkLrVha6EMaXP_cBxSpADdzhSJqK_m0zR_Qg/exec';
-
-    const giftsGrid = document.getElementById('giftsGrid');
-    const giftMsg   = document.getElementById('giftMsg');
-    // Move a mensagem para o topo da lista de presentes
-    if (giftMsg && giftsGrid && giftMsg.nextElementSibling !== giftsGrid) {
-      giftsGrid.parentNode.insertBefore(giftMsg, giftsGrid);
-    }
-
-    const rsvpForm  = document.getElementById('rsvpForm');
-    const rsvpMsg   = document.getElementById('rsvpMsg');
-    const rsvpBtn   = document.getElementById('rsvpBtn');
-
-    function showGiftError(msg, detail){
-      giftsGrid.innerHTML = `<div class="card err">${msg}</div>`;
-      if (detail) console.warn(detail.slice(0,1000));
-    }
-
-    async function loadGifts(){
-      try{
-        const res = await fetch(API + '?action=gifts&ts=' + Date.now(), {
-          method:'GET',
-          cache:'no-store',
-          headers:{ 'Accept':'application/json' }
-        });
-
-        const txt = await res.text();
-        let data = null;
-        try{ data = JSON.parse(txt); }catch(e){
-          showGiftError('Erro ao interpretar a lista de presentes. (Resposta não é JSON esperada.)', txt);
-          return;
-        }
-
-        const gifts = Array.isArray(data?.gifts) ? data.gifts : [];
-        if (!gifts.length){
-          giftsGrid.innerHTML = '<div class="card"><strong>Todos os presentes já foram escolhidos 🎉</strong><p class="muted">Muito obrigado pelo carinho!</p></div>';
-          return;
-        }
-
-        giftsGrid.innerHTML = gifts.map(g=>{
-          const desc = g.description ? `<p class="muted">${g.description}</p>` : '';
-          const img  = g.image_url ? `<img src="${g.image_url}" alt="${g.title}">` : '';
-          return `
-            <article class="card" aria-label="${g.title}">
-              ${img}
-              <h3 style="margin:.6rem 0 .2rem">${g.title}</h3>
-              ${desc}
-              <p><small class="muted">Disponíveis: ${g.remaining}</small></p>
-              <div class="row" role="group" aria-label="Reservar ${g.title}">
-                <input type="number" min="1" max="${g.remaining}" value="1" id="qty_${g.id}" aria-label="Quantidade para reservar">
-                <button type="button" class="btn btn-outline" onclick="reserve('${g.id}', this)">Reservar</button>
-              </div>
-            </article>
-          `;
-        }).join('');
-      }catch(e){
-        console.error(e);
-        showGiftError('Erro de conexão ao carregar presentes.', String(e));
-      }
-    }
-
-    async function reserve(gift_id, btnEl){
-  giftMsg.textContent = '';
-  const qtyInput = document.getElementById('qty_' + gift_id);
-  const qty = Math.max(1, Number(qtyInput?.value || 1));
-
-  // só pede o nome (obrigatório)
-  const name = (prompt('Seu nome completo:') || '').trim();
-  if (!name){
-    giftMsg.innerHTML = '<span class="err">Informe seu nome completo.</span>';
-    return;
-  }
-
-  // gera um e-mail placeholder a partir do nome (RFC "invalid" é seguro)
-  const slug = name.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // tira acentos
-    .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
-    || 'convidado';
-  const placeholderEmail = `${slug}@sem-email.invalid`;
-
-  try{
-    if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
-
-    const body = new URLSearchParams({
-      action: 'reserve',
-      gift_id,
-      qty: String(qty),
-      name,
-      email: placeholderEmail,   // <- satisfaz o backend
-      noemail: '1'               // <- dica opcional p/ você tratar no Apps Script
-    });
-
-    const res = await fetch(API, {
-      method: 'POST',
-      body,
-      cache: 'no-store',
-      headers: { 'Accept': 'application/json' }
-    });
-    const txt = await res.text();
-
-    let data = null;
-    try{ data = JSON.parse(txt); }catch(e){
-      giftMsg.innerHTML = '<span class="err">Erro ao interpretar a resposta da reserva.</span>';
-      console.warn('Reserve raw:', txt.slice(0,1000));
-      await loadGifts();
-      return;
-    }
-
-    if (data.ok){
-      giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💗</span>';
-      await loadGifts();
-    } else {
-      giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
-      await loadGifts();
-    }
-  }catch(e){
-    console.error(e);
-    giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-  }finally{
-    if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
-  }
-}
-
-    window.reserve = reserve;
-
-    // RSVP
-    try{
-      rsvpForm.addEventListener('submit', async (ev)=>{
-        ev.preventDefault();
-        rsvpMsg.textContent = '';
-        rsvpBtn.disabled = true; rsvpBtn.textContent = 'Enviando…';
-
-        const required = ['name','email','attending'];
-        for (const n of required){
-          const el = rsvpForm.elements[n];
-          if (!el || !el.value){
-            rsvpMsg.innerHTML = '<span class="err">Preencha os campos obrigatórios.</span>';
-            el?.focus();
-            rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
-            return;
-          }
-        }
-
-        try{
-          const fd = new FormData(rsvpForm); fd.append('action','rsvp');
-          const res = await fetch(API, { method:'POST', body:new URLSearchParams(fd), cache:'no-store', headers:{ 'Accept':'application/json' } });
-          const txt  = await res.text();
-
-          let data = null;
-          try{ data = JSON.parse(txt); }catch(e){
-            rsvpMsg.innerHTML = '<span class="err">Erro ao interpretar a resposta do RSVP.</span>';
-            console.warn('RSVP raw:', txt.slice(0,1000));
-            rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
-            return;
-          }
-
-          if (data.ok){
-            rsvpMsg.innerHTML = '<span class="ok">RSVP enviado. Obrigado!</span>';
-            rsvpForm.reset();
-            document.querySelector('.nav a[href="#gifts"]')?.scrollIntoView({ behavior:'smooth', block:'center' });
-          } else {
-            rsvpMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível enviar o RSVP.') + '</span>';
-          }
-        }catch(e){
-          console.error(e);
-          rsvpMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-        }finally{
-          rsvpBtn.disabled = false; rsvpBtn.textContent = 'Enviar confirmação';
-        }
-      });
-    }catch(e){ console.error('RSVP init error:', e); }
-
-    // carrega a lista ao abrir
-    loadGifts();
-  </script>
-</body>
-</html>
+    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-posi
