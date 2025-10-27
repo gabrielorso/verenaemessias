@@ -149,6 +149,48 @@
     /* Sucesso em fúcsia */
 .ok{ color: var(--brand) !important; font-weight: 700; }
 #giftMsg, #rsvpMsg{ margin:.75rem 0; }
+    /* === Cards de presentes compactos e com botão visível === */
+#gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
+#gifts .row input[type="number"]{
+  width:90px;              /* para de ocupar 100% */
+  flex:0 0 90px;           /* largura fixa e não cresce */
+  margin:0;
+}
+#gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }  /* botão sempre aparece */
+
+@media (max-width: 768px){
+  #gifts .card{ padding:12px; border-radius:12px; }
+  #gifts .card h3{ font-size:1rem; margin:.5rem 0 .25rem; }
+  #gifts .card p{ margin:.25rem 0; }
+  #gifts .card img{ height:140px; }   /* reduz a imagem pra encurtar o card */
+  #gifts .row{ gap:.5rem; }
+  #gifts .row input[type="number"]{ width:78px; flex-basis:78px; }
+}
+/* === Gifts compactos + botão sempre visível === */
+#gifts .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:nowrap; }
+#gifts .row input[type="number"]{
+  width:90px; flex:0 0 90px; margin:0;
+}
+#gifts .row .btn{ flex:1 0 auto; white-space:nowrap; }
+
+/* Fotos com aspect-ratio e cards mais baixos */
+#gifts .card img{
+  height:auto !important;         /* sobrescreve height:180px */
+  aspect-ratio: 16 / 9;           /* largura total do card → altura calculada */
+  object-fit: cover; border-radius:10px;
+}
+
+/* Enxuga tipografia/espacamentos do card */
+#gifts .card{ padding:12px 12px 14px; border-radius:12px; }
+#gifts .card h3{ font-size:1rem; line-height:1.25; margin:.5rem 0 .25rem; }
+#gifts .card p{ margin:.25rem 0; }
+
+/* Mobile: ainda mais compacto */
+@media (max-width: 768px){
+  #gifts .row{ gap:.5rem; }
+  #gifts .row input[type="number"]{ width:78px; flex-basis:78px; }
+  #gifts .card img{ aspect-ratio: 16 / 10; } /* um tiquinho mais baixo no celular */
+}
   </style>
 </head>
 <body>
