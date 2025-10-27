@@ -372,40 +372,59 @@
     }
 
     async function reserve(gift_id, btnEl){
-      giftMsg.textContent = '';
-      const qtyInput = document.getElementById('qty_'+gift_id);
-      const qty = Math.max(1, Number(qtyInput?.value || 1));
-      const name = prompt('Seu nome completo:') || '';
-      const email = prompt('Seu e-mail (para confirmação):') || '';
-      if (!name || !email){ giftMsg.innerHTML = '<span class="err">Nome e e-mail são obrigatórios.</span>'; return; }
+  giftMsg.textContent = '';
+  const qtyInput = document.getElementById('qty_' + gift_id);
+  const qty = Math.max(1, Number(qtyInput?.value || 1));
 
-      try{
-        if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
-        const body = new URLSearchParams({ action:'reserve', gift_id, qty:String(qty), name, email });
-        const res  = await fetch(API, { method:'POST', body, cache:'no-store', headers:{ 'Accept':'application/json' } });
-        const txt  = await res.text();
+  // só pede o nome (e exige que não esteja vazio)
+  const name = (prompt('Seu nome completo:') || '').trim();
+  if (!name){
+    giftMsg.innerHTML = '<span class="err">Informe seu nome completo.</span>';
+    return;
+  }
 
-        let data = null;
-        try{ data = JSON.parse(txt); }catch(e){
-          giftMsg.innerHTML = '<span class="err">Erro ao interpretar a resposta da reserva.</span>';
-          console.warn('Reserve raw:', txt.slice(0,1000));
-          await loadGifts(); return;
-        }
+  try{
+    if (btnEl){ btnEl.disabled = true; btnEl.textContent = 'Reservando…'; }
 
-        if (data.ok){
-          giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💗</span>';
-          await loadGifts();
-        } else {
-          giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
-          await loadGifts();
-        }
-      }catch(e){
-        console.error(e);
-        giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
-      }finally{
-        if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
-      }
+    // e-mail agora é opcional → envio vazio só para compatibilidade
+    const body = new URLSearchParams({
+      action: 'reserve',
+      gift_id,
+      qty: String(qty),
+      name,
+      email: ''            // se preferir não enviar, pode remover esta linha
+    });
+
+    const res = await fetch(API, {
+      method: 'POST',
+      body,
+      cache: 'no-store',
+      headers: { 'Accept': 'application/json' }
+    });
+    const txt = await res.text();
+
+    let data = null;
+    try{ data = JSON.parse(txt); }catch(e){
+      giftMsg.innerHTML = '<span class="err">Erro ao interpretar a resposta da reserva.</span>';
+      console.warn('Reserve raw:', txt.slice(0,1000));
+      await loadGifts();
+      return;
     }
+
+    if (data.ok){
+      giftMsg.innerHTML = '<span class="ok">Presente reservado com sucesso! Obrigado 💗</span>';
+      await loadGifts();
+    } else {
+      giftMsg.innerHTML = '<span class="err">' + (data.error || 'Não foi possível reservar') + '</span>';
+      await loadGifts();
+    }
+  }catch(e){
+    console.error(e);
+    giftMsg.innerHTML = '<span class="err">Erro de conexão.</span>';
+  }finally{
+    if (btnEl){ btnEl.disabled = false; btnEl.textContent = 'Reservar'; }
+  }
+}
     window.reserve = reserve;
 
     // RSVP
